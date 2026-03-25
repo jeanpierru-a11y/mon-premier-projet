@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta http-equiv="Permissions-Policy" content="microphone=*">
 <title>Guide de Lecture — Axel</title>
 <style>
 :root {
@@ -10,226 +11,283 @@
   --vert:#2E7D32; --vertC:#E8F5E9;
   --orange:#E65100; --orangeC:#FFF3E0;
   --violet:#6A1B9A; --violetC:#F3E5F5;
-  --rouge:#c0392b;
+  --rouge:#c0392b; --rougeC:#FFEBEE;
   --jaune:#F9A825; --jauneC:#FFFDE7;
-  --gris:#F0F2F5; --texte:#1a1a2e;
-  --blanc:#fff;
-  --ombre:0 2px 10px rgba(0,0,0,0.08);
-  --r:14px;
+  --gris:#F0F2F5; --gris2:#e0e0e0; --texte:#1a1a2e;
+  --blanc:#ffffff; --ombre:0 2px 12px rgba(0,0,0,0.08); --r:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:var(--texte);display:flex;flex-direction:column;}
 
-/* HEADER */
-#header{background:var(--bleu);color:#fff;padding:11px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
-.logo{font-weight:900;font-size:1rem;}
-.sub{font-size:.65rem;opacity:.8;font-weight:600;}
-.badge{margin-left:auto;background:rgba(255,255,255,.2);border-radius:20px;padding:3px 10px;font-size:.65rem;font-weight:700;}
+/* ── ÉCRAN BIBLIOTHÈQUE ── */
+#screen-biblio{display:flex;flex-direction:column;height:100%;}
+#biblio-header{background:var(--bleu);color:#fff;padding:14px 16px;flex-shrink:0;}
+#biblio-header h1{font-size:1.1rem;font-weight:900;}
+#biblio-header p{font-size:.72rem;opacity:.8;margin-top:2px;}
+#biblio-content{flex:1;overflow-y:auto;padding:14px;}
+#biblio-list{display:flex;flex-direction:column;gap:10px;}
+.livre-card{background:var(--blanc);border-radius:var(--r);padding:14px 16px;box-shadow:var(--ombre);cursor:pointer;border-left:5px solid var(--bleu);transition:box-shadow .15s;}
+.livre-card:active{box-shadow:0 1px 4px rgba(0,0,0,.1);}
+.livre-card .lc-titre{font-weight:800;font-size:1rem;color:var(--bleu);margin-bottom:4px;}
+.livre-card .lc-auteur{font-size:.82rem;color:#666;margin-bottom:6px;}
+.livre-card .lc-meta{display:flex;gap:10px;font-size:.72rem;color:#999;}
+.livre-card .lc-meta span{background:var(--gris);border-radius:8px;padding:2px 8px;}
+.btn-nouveau{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--bleu);color:#fff;border:none;border-radius:var(--r);padding:14px;font-family:inherit;font-weight:800;font-size:.95rem;cursor:pointer;box-shadow:0 4px 14px rgba(46,95,163,.3);}
 
-/* TABS */
-#tabs{display:flex;background:var(--blanc);border-bottom:2px solid #e8e8e8;flex-shrink:0;overflow-x:auto;scrollbar-width:none;}
+/* ── ÉCRAN GUIDE ── */
+#screen-guide{display:none;flex-direction:column;height:100%;}
+#guide-header{background:var(--bleu);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+#btn-retour{background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;padding:6px 10px;font-family:inherit;font-weight:700;font-size:.82rem;cursor:pointer;}
+#header-titre{flex:1;font-weight:900;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#header-date{font-size:.65rem;opacity:.75;white-space:nowrap;}
+
+#tabs{display:flex;background:var(--blanc);border-bottom:2px solid var(--gris2);flex-shrink:0;overflow-x:auto;scrollbar-width:none;}
 #tabs::-webkit-scrollbar{display:none;}
-.tab{flex:0 0 auto;padding:9px 13px;font-size:.76rem;font-weight:800;color:#aaa;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;}
+.tab{flex:0 0 auto;padding:9px 12px;font-size:.75rem;font-weight:800;color:#999;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;}
 .tab.active{color:var(--bleu);border-bottom-color:var(--bleu);}
 
-/* CONTENT */
-#content{flex:1;overflow-y:auto;padding:12px;padding-bottom:40px;}
-#content::-webkit-scrollbar{width:3px;}
-#content::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px;}
-
+#content{flex:1;overflow-y:auto;padding:12px;padding-bottom:60px;}
 .section{display:none;}
 .section.active{display:block;}
 
-/* CARDS */
+/* ── CARDS ── */
 .card{background:var(--blanc);border-radius:var(--r);padding:14px;box-shadow:var(--ombre);margin-bottom:10px;}
-.ctitle{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
+.card-title{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
 
-/* CHAMPS */
-.field{width:100%;font-family:inherit;font-size:1rem;font-weight:500;border:2px solid #e0e0e0;border-radius:10px;padding:10px 12px;outline:none;color:var(--texte);background:var(--blanc);resize:vertical;transition:border-color .15s;}
+/* ── CHAMPS ── */
+.field{width:100%;font-family:inherit;font-size:.93rem;font-weight:600;border:2px solid var(--gris2);border-radius:10px;padding:9px 12px;outline:none;color:var(--texte);background:var(--blanc);resize:vertical;}
 .field:focus{border-color:var(--bleu);}
-input.field{resize:none;}
-.gap{margin-bottom:8px;}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.field-mb{margin-bottom:8px;}
 
-/* HINT MICRO */
-.mic-hint{background:var(--bleuC);border-radius:9px;padding:8px 11px;font-size:.76rem;color:#2c4a80;font-weight:600;margin-bottom:10px;line-height:1.5;}
-.mic-hint b{color:var(--bleu);}
-
-/* BOUTONS */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;border:none;border-radius:10px;padding:9px 14px;font-family:inherit;font-weight:800;font-size:.83rem;cursor:pointer;transition:opacity .15s;}
-.btn:active{opacity:.7;}
+/* ── BOUTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;border:none;border-radius:10px;padding:9px 13px;font-family:inherit;font-weight:800;font-size:.82rem;cursor:pointer;}
+.btn:active{opacity:.75;}
 .btn-bleu{background:var(--bleu);color:#fff;}
 .btn-vert{background:var(--vert);color:#fff;}
 .btn-rouge{background:var(--rouge);color:#fff;}
 .btn-gris{background:#e8e8e8;color:#555;}
 .btn-orange{background:var(--orange);color:#fff;}
-.btn-sm{padding:6px 11px;font-size:.76rem;border-radius:8px;}
-.btn-xs{padding:4px 8px;font-size:.7rem;border-radius:7px;}
+.btn-sm{padding:6px 10px;font-size:.75rem;border-radius:8px;}
+.btn-xs{padding:4px 8px;font-size:.68rem;border-radius:7px;}
 .btn-full{width:100%;}
 
-/* ADD BAR */
-.add-bar{display:flex;gap:8px;margin-bottom:10px;align-items:center;}
-.add-bar input{flex:1;}
-
-/* ENTITÉS */
+/* ── ENTITÉS ── */
+.add-bar{display:flex;gap:8px;margin-bottom:10px;}
+.add-bar input{flex:1;font-family:inherit;font-size:.93rem;font-weight:700;border:2px solid var(--gris2);border-radius:10px;padding:9px 12px;outline:none;color:var(--texte);}
+.add-bar input:focus{border-color:var(--bleu);}
 .entity-list{display:flex;flex-direction:column;gap:8px;}
-.entity-item{background:var(--blanc);border-radius:12px;box-shadow:var(--ombre);overflow:hidden;border:1.5px solid #ebebeb;}
-.entity-hd{display:flex;align-items:center;gap:9px;padding:11px 12px;cursor:pointer;user-select:none;}
-.entity-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
-.entity-name{font-weight:800;font-size:.93rem;flex:1;}
+.entity-item{background:var(--blanc);border-radius:12px;box-shadow:var(--ombre);overflow:hidden;border:1.5px solid var(--gris2);}
+.entity-header{display:flex;align-items:center;gap:9px;padding:11px 12px;cursor:pointer;user-select:none;}
+.entity-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.entity-name{font-weight:800;font-size:.92rem;flex:1;}
 .entity-acts{display:flex;gap:5px;}
-.entity-chv{color:#ccc;font-size:.7rem;transition:transform .2s;margin-left:4px;}
-.entity-body{display:none;padding:0 12px 12px;border-top:1px solid #f2f2f2;}
+.entity-chv{color:#bbb;font-size:.7rem;transition:transform .2s;margin-left:4px;}
+.entity-body{display:none;padding:0 12px 12px;border-top:1px solid #f0f0f0;}
 .entity-body.open{display:block;}
-.entity-body textarea{margin-top:10px;}
 
-/* CITATIONS */
-.cit-bar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px;}
-.cit-on{background:var(--jauneC);border:1.5px solid var(--jaune);border-radius:9px;padding:7px 10px;font-size:.76rem;color:#7a5200;margin-bottom:8px;display:none;}
-.cit-on.show{display:block;}
+/* ── CITATIONS ── */
+.cit-bar{display:flex;gap:7px;margin-bottom:8px;flex-wrap:wrap;}
+.cit-notice{background:var(--jauneC);border:1.5px solid var(--jaune);border-radius:9px;padding:7px 10px;font-size:.78rem;color:#7a5200;margin-bottom:8px;display:none;}
+.cit-notice.on{display:block;}
 
-/* EXPORT */
+/* ── IMPORT/EXPORT ── */
 .export-card{background:var(--bleuC);border-radius:var(--r);padding:14px;margin-bottom:10px;}
-.help-card{background:var(--jauneC);border:1.5px solid var(--jaune);border-radius:var(--r);padding:14px;margin-bottom:10px;}
+.import-card{background:var(--vertC);border-radius:var(--r);padding:14px;margin-bottom:10px;}
 
-/* TOAST */
+/* ── MODAL ── */
+#modal-overlay{display:none;position:fixed;inset:0;background:#0007;z-index:100;align-items:flex-end;}
+#modal-overlay.open{display:flex;}
+#modal{background:var(--blanc);border-radius:20px 20px 0 0;padding:20px 16px;width:100%;max-height:80vh;overflow-y:auto;}
+#modal h3{font-size:.98rem;font-weight:900;margin-bottom:12px;}
+#modal-actions{display:flex;gap:8px;margin-top:12px;}
+
+/* ── MODAL NOUVEAU LIVRE ── */
+#modal-livre-overlay{display:none;position:fixed;inset:0;background:#0008;z-index:200;align-items:center;justify-content:center;padding:20px;}
+#modal-livre-overlay.open{display:flex;}
+#modal-livre{background:var(--blanc);border-radius:20px;padding:22px 18px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
+#modal-livre h2{font-size:1.05rem;font-weight:900;color:var(--bleu);margin-bottom:14px;}
+
+/* ── TOAST ── */
 #toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(80px);color:#fff;padding:9px 18px;border-radius:22px;font-size:.8rem;font-weight:700;z-index:999;box-shadow:0 4px 14px #0003;white-space:nowrap;transition:transform .25s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
 #toast.show{transform:translateX(-50%) translateY(0);}
 
-/* MODAL */
-#modal-ov{display:none;position:fixed;inset:0;background:#0007;z-index:100;align-items:flex-end;}
-#modal-ov.open{display:flex;}
-#modal{background:var(--blanc);border-radius:20px 20px 0 0;padding:20px 16px;width:100%;}
-#modal h3{font-size:.95rem;font-weight:900;margin-bottom:12px;}
-#modal-acts{display:flex;gap:8px;margin-top:12px;}
+/* ── HELP ── */
+.help-card{background:var(--jauneC);border:1.5px solid var(--jaune);border-radius:var(--r);padding:14px;margin-bottom:10px;font-size:.8rem;line-height:1.65;color:#555;}
+.help-card b{color:var(--texte);}
 </style>
 </head>
 <body>
 
-<div id="header">
-  <div><div class="logo">📖 Guide de Lecture</div><div class="sub">6ème · Axel</div></div>
-  <div class="badge" id="livre-badge">Mon livre</div>
+<!-- ══════════════════════════════════════════
+     ÉCRAN 1 : BIBLIOTHÈQUE
+══════════════════════════════════════════ -->
+<div id="screen-biblio">
+  <div id="biblio-header">
+    <h1>📚 Ma Bibliothèque</h1>
+    <p>Guide de lecture — Axel · 6ème</p>
+  </div>
+  <div id="biblio-content">
+    <div style="margin-bottom:12px;">
+      <button class="btn-nouveau btn-full" onclick="ouvrirModalNouveauLivre()">＋ Nouveau livre</button>
+    </div>
+    <div id="biblio-list"></div>
+    <div id="biblio-vide" style="text-align:center;padding:40px 20px;color:#bbb;font-size:.9rem;font-weight:600;display:none;">
+      Aucun livre pour le moment.<br>Appuie sur <b>+ Nouveau livre</b> pour commencer !
+    </div>
+  </div>
 </div>
 
-<div id="tabs">
-  <button class="tab active" onclick="showTab('livre',this)">📚 Livre</button>
-  <button class="tab" onclick="showTab('personnages',this)">👤 Persos</button>
-  <button class="tab" onclick="showTab('lieux',this)">🗺️ Lieux</button>
-  <button class="tab" onclick="showTab('temps',this)">⏳ Temps</button>
-  <button class="tab" onclick="showTab('mots',this)">💬 Mots</button>
-  <button class="tab" onclick="showTab('comprehension',this)">💭 Avis</button>
+<!-- ══════════════════════════════════════════
+     ÉCRAN 2 : GUIDE DE LECTURE
+══════════════════════════════════════════ -->
+<div id="screen-guide">
+  <div id="guide-header">
+    <button id="btn-retour" onclick="retourBiblio()">← Livres</button>
+    <div style="flex:1;min-width:0;">
+      <div id="header-titre">—</div>
+      <div id="header-date"></div>
+    </div>
+  </div>
+
+  <div id="tabs">
+    <button class="tab active" onclick="showTab('livre',this)">📚 Livre</button>
+    <button class="tab" onclick="showTab('personnages',this)">👤 Persos</button>
+    <button class="tab" onclick="showTab('lieux',this)">🗺️ Lieux</button>
+    <button class="tab" onclick="showTab('temps',this)">⏳ Temps</button>
+    <button class="tab" onclick="showTab('mots',this)">💬 Mots</button>
+    <button class="tab" onclick="showTab('comprehension',this)">💭 Avis</button>
+  </div>
+
+  <div id="content">
+
+    <!-- LIVRE -->
+    <div class="section active" id="sec-livre">
+      <div class="card">
+        <div class="card-title" style="color:var(--bleu)">📚 Informations du livre</div>
+        <input id="livre-titre"  class="field field-mb" type="text" placeholder="Titre du livre…" oninput="saveLivre()">
+        <div class="field-row">
+          <input id="livre-auteur" class="field" type="text" placeholder="Auteur(e)…" oninput="saveLivre()">
+          <input id="livre-genre"  class="field" type="text" placeholder="Genre…"     oninput="saveLivre()">
+        </div>
+        <div class="field-row">
+          <input id="livre-pages"  class="field" type="text" placeholder="Nb de pages…" oninput="saveLivre()">
+          <input id="livre-annee"  class="field" type="text" placeholder="Époque…"       oninput="saveLivre()">
+        </div>
+      </div>
+
+      <div class="export-card">
+        <div class="card-title" style="color:var(--bleu);margin-bottom:6px;">📤 Exporter mes notes</div>
+        <button class="btn btn-bleu btn-full" onclick="exportTxt()">📄 Télécharger (.txt)</button>
+      </div>
+
+      <div class="import-card">
+        <div class="card-title" style="color:var(--vert);margin-bottom:6px;">📥 Importer des notes</div>
+        <p style="font-size:.78rem;color:#555;margin-bottom:8px;">Recharge un fichier .txt exporté précédemment.</p>
+        <label style="display:block;">
+          <input type="file" id="import-file" accept=".txt" style="display:none" onchange="importTxt(this)">
+          <span class="btn btn-vert btn-full" onclick="document.getElementById('import-file').click()">📂 Choisir un fichier .txt</span>
+        </label>
+      </div>
+
+      <div class="help-card">
+        <b>💡 Comment dicter ?</b><br>
+        <b>iPad :</b> touche un champ → micro 🎤 dans la barre au-dessus du clavier.<br>
+        <b>Android :</b> touche un champ → micro 🎤 sur le clavier Google.<br><br>
+        <b>Personnages & Lieux :</b> crée une fiche avec <b>＋</b>, ouvre-la, dicte tes notes.<br>
+        <b>Citations :</b> appuie sur <b>« Début</b>, dicte, puis <b>Fin »</b>.<br>
+        <b>Sauvegarde :</b> automatique à chaque frappe.
+      </div>
+    </div>
+
+    <!-- PERSONNAGES -->
+    <div class="section" id="sec-personnages">
+      <div class="card">
+        <div class="card-title" style="color:var(--bleu)">👤 Nouveau personnage</div>
+        <div class="add-bar">
+          <input id="perso-input" type="text" placeholder="Nom du personnage…"
+            onkeydown="if(event.key==='Enter')addEntity('personnages')">
+          <button class="btn btn-bleu" onclick="addEntity('personnages')">＋</button>
+        </div>
+      </div>
+      <div class="entity-list" id="list-personnages"></div>
+    </div>
+
+    <!-- LIEUX -->
+    <div class="section" id="sec-lieux">
+      <div class="card">
+        <div class="card-title" style="color:var(--vert)">🗺️ Nouveau lieu</div>
+        <div class="add-bar">
+          <input id="lieu-input" type="text" placeholder="Nom du lieu…"
+            onkeydown="if(event.key==='Enter')addEntity('lieux')">
+          <button class="btn btn-vert" onclick="addEntity('lieux')">＋</button>
+        </div>
+      </div>
+      <div class="entity-list" id="list-lieux"></div>
+    </div>
+
+    <!-- TEMPS -->
+    <div class="section" id="sec-temps">
+      <div class="card">
+        <div class="card-title" style="color:var(--orange)">⏳ Époque &amp; Chronologie</div>
+        <textarea id="temps-text" class="field" rows="14"
+          placeholder="L'époque, les dates importantes, l'ordre des événements…"
+          oninput="saveTexte('temps')"></textarea>
+      </div>
+    </div>
+
+    <!-- MOTS & CITATIONS -->
+    <div class="section" id="sec-mots">
+      <div class="card">
+        <div class="card-title" style="color:var(--violet)">💬 Mots difficiles &amp; Citations</div>
+        <div class="cit-bar">
+          <button class="btn btn-orange btn-sm" onclick="debutCitation()">« Début citation</button>
+          <button class="btn btn-gris btn-sm" onclick="finCitation()">Fin citation »</button>
+          <button class="btn btn-gris btn-sm" onclick="insertSep()">── Mot ──</button>
+        </div>
+        <div class="cit-notice" id="cit-notice">✏️ Mode citation — dicte le texte puis <b>Fin citation »</b></div>
+        <textarea id="mots-zone" class="field" rows="15"
+          placeholder="── Mot inconnu ──&#10;Nautilus : sous-marin du Capitaine Nemo&#10;&#10;« Il plongea dans les abysses. »&#10;(page 47)"
+          oninput="saveTexte('mots')"></textarea>
+      </div>
+    </div>
+
+    <!-- COMPRÉHENSION -->
+    <div class="section" id="sec-comprehension">
+      <div class="card">
+        <div class="card-title" style="color:var(--violet)">💭 Compréhension &amp; Avis</div>
+        <textarea id="compre-text" class="field" rows="16"
+          placeholder="Ce que tu as compris, ce que tu penses, les moments importants…"
+          oninput="saveTexte('comprehension')"></textarea>
+      </div>
+    </div>
+
+  </div><!-- fin content -->
+</div><!-- fin screen-guide -->
+
+<!-- ══ MODAL NOUVEAU LIVRE ══ -->
+<div id="modal-livre-overlay">
+  <div id="modal-livre">
+    <h2>📖 Nouveau livre</h2>
+    <input id="nl-titre" class="field field-mb" type="text" placeholder="Titre du livre…">
+    <div class="field-row">
+      <input id="nl-auteur" class="field" type="text" placeholder="Auteur(e)…">
+      <input id="nl-genre"  class="field" type="text" placeholder="Genre…">
+    </div>
+    <div id="modal-livre-actions" style="display:flex;gap:8px;margin-top:14px;">
+      <button class="btn btn-bleu" style="flex:1" onclick="creerLivre()">✅ Créer</button>
+      <button class="btn btn-gris" onclick="fermerModalLivre()">Annuler</button>
+    </div>
+  </div>
 </div>
 
-<div id="content">
-
-  <!-- LIVRE -->
-  <div class="section active" id="sec-livre">
-    <div class="card">
-      <div class="ctitle" style="color:var(--bleu)">📚 Informations du livre</div>
-      <div class="mic-hint">🎤 <b>Pour dicter</b> : touche un champ, puis appuie sur le micro du clavier (iOS : barre au-dessus du clavier / Android : icône micro sur le clavier).</div>
-      <input id="livre-titre"  class="field gap" type="text" placeholder="Titre du livre…" oninput="save();updateBadge()">
-      <div class="row2">
-        <input id="livre-auteur" class="field" type="text" placeholder="Auteur(e)…"  oninput="save()">
-        <input id="livre-genre"  class="field" type="text" placeholder="Genre…"      oninput="save()">
-      </div>
-      <div class="row2">
-        <input id="livre-pages"  class="field" type="text" placeholder="Nb de pages…" oninput="save()">
-        <input id="livre-annee"  class="field" type="text" placeholder="Époque…"      oninput="save()">
-      </div>
-    </div>
-    <div class="export-card">
-      <div class="ctitle" style="color:var(--bleu);margin-bottom:6px;">📤 Exporter mes notes</div>
-      <p style="font-size:.76rem;color:#444;margin-bottom:10px;">Télécharge toutes tes fiches en fichier texte (.txt).</p>
-      <button class="btn btn-bleu btn-full" onclick="exportTxt()">📄 Télécharger</button>
-    </div>
-    <div class="help-card">
-      <div class="ctitle" style="color:var(--jaune);">💡 Mode d'emploi</div>
-      <p style="font-size:.78rem;line-height:1.7;color:#555;">
-        <b>Dicter sur iPad</b> : touche un champ de texte → le clavier apparaît → appuie sur le <b>micro 🎤</b> dans la barre au-dessus du clavier.<br>
-        <b>Dicter sur Android</b> : touche un champ → appuie sur le <b>micro 🎤</b> sur le clavier Google.<br>
-        <b>Personnages & Lieux</b> : crée une fiche avec <b>＋</b>, ouvre-la, dicte tes notes.<br>
-        <b>Citations</b> : appuie sur <b>« Début</b>, dicte, puis <b>Fin »</b>.<br>
-        <b>Sauvegarde</b> : automatique à chaque frappe.
-      </p>
-    </div>
-  </div>
-
-  <!-- PERSONNAGES -->
-  <div class="section" id="sec-personnages">
-    <div class="card">
-      <div class="ctitle" style="color:var(--bleu)">👤 Ajouter un personnage</div>
-      <div class="mic-hint">🎤 Touche le champ puis dicte le nom avec le micro du clavier.</div>
-      <div class="add-bar">
-        <input id="perso-input" class="field" type="text" placeholder="Nom du personnage…"
-          onkeydown="if(event.key==='Enter')addEntity('personnages')">
-        <button class="btn btn-bleu" onclick="addEntity('personnages')">＋ Ajouter</button>
-      </div>
-    </div>
-    <div class="entity-list" id="list-personnages"></div>
-  </div>
-
-  <!-- LIEUX -->
-  <div class="section" id="sec-lieux">
-    <div class="card">
-      <div class="ctitle" style="color:var(--vert)">🗺️ Ajouter un lieu</div>
-      <div class="mic-hint">🎤 Touche le champ puis dicte le nom avec le micro du clavier.</div>
-      <div class="add-bar">
-        <input id="lieu-input" class="field" type="text" placeholder="Nom du lieu…"
-          onkeydown="if(event.key==='Enter')addEntity('lieux')">
-        <button class="btn btn-vert" onclick="addEntity('lieux')">＋ Ajouter</button>
-      </div>
-    </div>
-    <div class="entity-list" id="list-lieux"></div>
-  </div>
-
-  <!-- TEMPS -->
-  <div class="section" id="sec-temps">
-    <div class="card">
-      <div class="ctitle" style="color:var(--orange)">⏳ Époque &amp; Chronologie</div>
-      <div class="mic-hint">🎤 Touche la zone, puis dicte avec le micro du clavier.</div>
-      <textarea id="temps-text" class="field" rows="14"
-        placeholder="Ex : L'histoire se passe au XIXe siècle. Au chapitre 3, le Nautilus plonge pour la première fois. Au chapitre 5…"
-        oninput="save()"></textarea>
-    </div>
-  </div>
-
-  <!-- MOTS & CITATIONS -->
-  <div class="section" id="sec-mots">
-    <div class="card">
-      <div class="ctitle" style="color:var(--violet)">💬 Mots difficiles &amp; Citations</div>
-      <div class="mic-hint">🎤 Touche la zone, dicte, puis utilise les boutons pour structurer.</div>
-      <div class="cit-bar">
-        <button class="btn btn-orange btn-sm" onclick="debutCit()">« Début citation</button>
-        <button class="btn btn-gris btn-sm"   onclick="finCit()">Fin citation »</button>
-        <button class="btn btn-gris btn-sm"   onclick="insertMot()">＋ Mot inconnu</button>
-      </div>
-      <div class="cit-on" id="cit-on">✏️ Mode citation actif — dicte le texte puis appuie sur <b>Fin citation »</b></div>
-      <textarea id="mots-zone" class="field" rows="14"
-        placeholder="Ex :&#10;── Mot inconnu ──&#10;Nautilus : sous-marin imaginé par Nemo.&#10;&#10;« Il était une créature des profondeurs. »&#10;(page 42)"
-        oninput="save()"></textarea>
-    </div>
-  </div>
-
-  <!-- COMPRÉHENSION -->
-  <div class="section" id="sec-comprehension">
-    <div class="card">
-      <div class="ctitle" style="color:var(--violet)">💭 Compréhension &amp; Avis</div>
-      <div class="mic-hint">🎤 Touche la zone et dicte ce que tu as compris ou ce que tu penses.</div>
-      <textarea id="compre-text" class="field" rows="16"
-        placeholder="Ex : Au chapitre 3, j'ai compris que le Capitaine Nemo veut fuir les hommes. Je pense que c'est triste parce que…"
-        oninput="save()"></textarea>
-    </div>
-  </div>
-
-</div>
-
-<!-- MODAL ÉDITION NOM -->
-<div id="modal-ov" onclick="closeModal(event)">
+<!-- ══ MODAL ÉDITION NOM ══ -->
+<div id="modal-overlay" onclick="closeModal(event)">
   <div id="modal">
     <h3 id="modal-title">Modifier le nom</h3>
-    <input id="modal-input" class="field gap" type="text" placeholder="Nouveau nom…">
-    <div id="modal-acts">
+    <input id="modal-input" class="field" type="text" style="margin-bottom:0">
+    <div id="modal-actions">
       <button class="btn btn-bleu" style="flex:1" onclick="confirmModal()">✅ Valider</button>
       <button class="btn btn-gris" onclick="closeModal()">Annuler</button>
     </div>
@@ -239,86 +297,250 @@ input.field{resize:none;}
 <div id="toast"></div>
 
 <script>
-// ════════════════════════════════
-// ÉTAT
-// ════════════════════════════════
-const DATA = {
-  livre: { titre:'', auteur:'', genre:'', pages:'', annee:'' },
-  personnages: [],
-  lieux: [],
-  temps: '', mots: '', comprehension: ''
-};
-const COULEURS = ['#2E5FA3','#2E7D32','#E65100','#6A1B9A','#c0392b','#00838F','#558B2F','#AD1457','#FF8F00'];
-let couleurIdx = 0;
+// ════════════════════════════════════════════════════════
+// STRUCTURE DES DONNÉES
+// ════════════════════════════════════════════════════════
+// localStorage['axel_biblio'] = {
+//   livres: [
+//     {
+//       id: "liv_xxxxx",          // identifiant permanent
+//       titre: "20000 lieues",
+//       auteur: "Jules Verne",
+//       genre: "Aventure",
+//       pages: "422",
+//       annee: "XIXe siècle",
+//       dateCreation: "25/03/2026",  // date lisible
+//       tsCreation: 1743000000000,   // timestamp pour tri
+//       personnages: [{id, nom, notes, couleur}],
+//       lieux:       [{id, nom, notes, couleur}],
+//       temps:        "",
+//       mots:         "",
+//       comprehension: ""
+//     }
+//   ]
+// }
 
-// ════════════════════════════════
+const COULEURS = ['#2E5FA3','#2E7D32','#E65100','#6A1B9A','#c0392b','#00838F','#558B2F','#AD1457'];
+let BIBLIO = { livres: [] };
+let LIVRE_ACTIF = null;  // objet livre en cours
+let couleurIdx  = 0;
+
+// ════════════════════════════════════════════════════════
+// PERSISTENCE
+// ════════════════════════════════════════════════════════
+function sauvegarderBiblio() {
+  try { localStorage.setItem('axel_biblio', JSON.stringify(BIBLIO)); } catch(e){}
+}
+function chargerBiblio() {
+  try {
+    const raw = localStorage.getItem('axel_biblio');
+    if (raw) BIBLIO = JSON.parse(raw);
+    // Migration depuis ancien format v5
+    const oldData = localStorage.getItem('axel_guide_v5');
+    if (oldData && !BIBLIO.livres.length) {
+      migrerAncienFormat(JSON.parse(oldData));
+    }
+  } catch(e){}
+}
+
+function migrerAncienFormat(old) {
+  if (!old) return;
+  const livre = creerNouveauLivreObj(
+    old.livre?.titre || 'Livre importé',
+    old.livre?.auteur || '',
+    old.livre?.genre || ''
+  );
+  livre.pages         = old.livre?.pages  || '';
+  livre.annee         = old.livre?.annee  || '';
+  livre.personnages   = old.personnages   || [];
+  livre.lieux         = old.lieux         || [];
+  livre.temps         = old.temps         || '';
+  livre.mots          = old.mots          || '';
+  livre.comprehension = old.comprehension || '';
+  BIBLIO.livres.push(livre);
+  sauvegarderBiblio();
+  showToast('Données précédentes importées !', 'ok');
+}
+
+// ════════════════════════════════════════════════════════
+// BIBLIOTHÈQUE
+// ════════════════════════════════════════════════════════
+function renderBiblio() {
+  const list = document.getElementById('biblio-list');
+  const vide = document.getElementById('biblio-vide');
+  list.innerHTML = '';
+  if (!BIBLIO.livres.length) { vide.style.display = 'block'; return; }
+  vide.style.display = 'none';
+  // Tri par date décroissante
+  const sorted = [...BIBLIO.livres].sort((a,b) => b.tsCreation - a.tsCreation);
+  sorted.forEach(livre => {
+    const div = document.createElement('div');
+    div.className = 'livre-card';
+    div.innerHTML =
+      '<div class="lc-titre">' + esc(livre.titre || 'Sans titre') + '</div>' +
+      '<div class="lc-auteur">' + esc(livre.auteur || 'Auteur inconnu') + '</div>' +
+      '<div class="lc-meta">' +
+        (livre.genre ? '<span>' + esc(livre.genre) + '</span>' : '') +
+        '<span>📅 ' + esc(livre.dateCreation) + '</span>' +
+        '<span>' + countNotes(livre) + ' note' + (countNotes(livre)>1?'s':'') + '</span>' +
+      '</div>';
+    div.onclick = () => ouvrirLivre(livre.id);
+    list.appendChild(div);
+  });
+}
+
+function countNotes(livre) {
+  return (livre.personnages?.length||0) + (livre.lieux?.length||0) +
+    (livre.temps?1:0) + (livre.mots?1:0) + (livre.comprehension?1:0);
+}
+
+// ════════════════════════════════════════════════════════
+// CRÉATION D'UN LIVRE
+// ════════════════════════════════════════════════════════
+function creerNouveauLivreObj(titre, auteur, genre) {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric'});
+  return {
+    id:            'liv_' + Date.now().toString(36) + Math.random().toString(36).slice(2,5),
+    titre:         titre  || '',
+    auteur:        auteur || '',
+    genre:         genre  || '',
+    pages:         '',
+    annee:         '',
+    dateCreation:  dateStr,
+    tsCreation:    now.getTime(),
+    personnages:   [],
+    lieux:         [],
+    temps:         '',
+    mots:          '',
+    comprehension: ''
+  };
+}
+
+function ouvrirModalNouveauLivre() {
+  document.getElementById('nl-titre').value  = '';
+  document.getElementById('nl-auteur').value = '';
+  document.getElementById('nl-genre').value  = '';
+  document.getElementById('modal-livre-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('nl-titre').focus(), 100);
+}
+function fermerModalLivre() {
+  document.getElementById('modal-livre-overlay').classList.remove('open');
+}
+function creerLivre() {
+  const titre  = document.getElementById('nl-titre').value.trim();
+  const auteur = document.getElementById('nl-auteur').value.trim();
+  const genre  = document.getElementById('nl-genre').value.trim();
+  if (!titre) { showToast('Donne un titre au livre', 'warn'); return; }
+  const livre = creerNouveauLivreObj(titre, auteur, genre);
+  BIBLIO.livres.push(livre);
+  sauvegarderBiblio();
+  fermerModalLivre();
+  ouvrirLivre(livre.id);
+}
+document.getElementById('nl-titre').addEventListener('keydown', e => {
+  if (e.key === 'Enter') creerLivre();
+});
+
+// ════════════════════════════════════════════════════════
+// OUVRIR UN LIVRE
+// ════════════════════════════════════════════════════════
+function ouvrirLivre(id) {
+  const livre = BIBLIO.livres.find(l => l.id === id);
+  if (!livre) return;
+  LIVRE_ACTIF = livre;
+  couleurIdx = (livre.personnages.length + livre.lieux.length) % COULEURS.length;
+
+  // Remplir les champs
+  document.getElementById('livre-titre').value  = livre.titre  || '';
+  document.getElementById('livre-auteur').value = livre.auteur || '';
+  document.getElementById('livre-genre').value  = livre.genre  || '';
+  document.getElementById('livre-pages').value  = livre.pages  || '';
+  document.getElementById('livre-annee').value  = livre.annee  || '';
+  document.getElementById('temps-text').value   = livre.temps  || '';
+  document.getElementById('mots-zone').value    = livre.mots   || '';
+  document.getElementById('compre-text').value  = livre.comprehension || '';
+
+  // Header
+  document.getElementById('header-titre').textContent =
+    livre.titre || 'Sans titre';
+  document.getElementById('header-date').textContent =
+    'Créé le ' + livre.dateCreation;
+
+  // Listes entités
+  document.getElementById('list-personnages').innerHTML = '';
+  document.getElementById('list-lieux').innerHTML = '';
+  livre.personnages.forEach(p => renderEntity('personnages', p));
+  livre.lieux.forEach(l => renderEntity('lieux', l));
+
+  // Basculer écrans
+  document.getElementById('screen-biblio').style.display = 'none';
+  document.getElementById('screen-guide').style.display  = 'flex';
+
+  // Onglet livre par défaut
+  showTab('livre', document.querySelector('.tab'));
+}
+
+function retourBiblio() {
+  document.getElementById('screen-guide').style.display  = 'none';
+  document.getElementById('screen-biblio').style.display = 'flex';
+  LIVRE_ACTIF = null;
+  renderBiblio();
+}
+
+// ════════════════════════════════════════════════════════
+// SAUVEGARDE AUTOMATIQUE
+// ════════════════════════════════════════════════════════
+function saveLivre() {
+  if (!LIVRE_ACTIF) return;
+  LIVRE_ACTIF.titre  = document.getElementById('livre-titre').value;
+  LIVRE_ACTIF.auteur = document.getElementById('livre-auteur').value;
+  LIVRE_ACTIF.genre  = document.getElementById('livre-genre').value;
+  LIVRE_ACTIF.pages  = document.getElementById('livre-pages').value;
+  LIVRE_ACTIF.annee  = document.getElementById('livre-annee').value;
+  // Mettre à jour le header
+  document.getElementById('header-titre').textContent =
+    LIVRE_ACTIF.titre || 'Sans titre';
+  sauvegarderBiblio();
+}
+function saveTexte(champ) {
+  if (!LIVRE_ACTIF) return;
+  const ids = { temps:'temps-text', mots:'mots-zone', comprehension:'compre-text' };
+  LIVRE_ACTIF[champ] = document.getElementById(ids[champ]).value;
+  sauvegarderBiblio();
+}
+
+// ════════════════════════════════════════════════════════
 // TABS
-// ════════════════════════════════
-function showTab(id, el) {
+// ════════════════════════════════════════════════════════
+function showTab(id, tabEl) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('sec-' + id).classList.add('active');
-  if (el) el.classList.add('active');
+  if (tabEl) tabEl.classList.add('active');
+  else document.querySelector('.tab')?.classList.add('active');
 }
 
-// ════════════════════════════════
-// SAUVEGARDE
-// ════════════════════════════════
-function save() {
-  ['titre','auteur','genre','pages','annee'].forEach(f => {
-    const el = document.getElementById('livre-' + f);
-    if (el) DATA.livre[f] = el.value;
-  });
-  DATA.temps         = g('temps-text');
-  DATA.mots          = g('mots-zone');
-  DATA.comprehension = g('compre-text');
-  try { localStorage.setItem('axel_v6', JSON.stringify(DATA)); } catch(e){}
-}
-
-function load() {
-  try {
-    const d = JSON.parse(localStorage.getItem('axel_v6') || 'null');
-    if (!d) return;
-    if (d.livre) {
-      Object.assign(DATA.livre, d.livre);
-      ['titre','auteur','genre','pages','annee'].forEach(f => {
-        const el = document.getElementById('livre-' + f);
-        if (el) el.value = DATA.livre[f] || '';
-      });
-      updateBadge();
-    }
-    if (d.personnages) { DATA.personnages = d.personnages; DATA.personnages.forEach(p => renderEntity('personnages', p)); }
-    if (d.lieux)       { DATA.lieux = d.lieux;             DATA.lieux.forEach(l => renderEntity('lieux', l)); }
-    s('temps-text',  d.temps);
-    s('mots-zone',   d.mots);
-    s('compre-text', d.comprehension);
-    couleurIdx = (DATA.personnages.length + DATA.lieux.length) % COULEURS.length;
-  } catch(e) { console.error(e); }
-}
-
-function g(id) { const el = document.getElementById(id); return el ? el.value : ''; }
-function s(id, v) { const el = document.getElementById(id); if (el && v) el.value = v; }
-
-function updateBadge() {
-  const t = g('livre-titre');
-  document.getElementById('livre-badge').textContent = t ? t.slice(0,18) + (t.length>18?'…':'') : 'Mon livre';
-}
-
-// ════════════════════════════════
-// ENTITÉS
-// ════════════════════════════════
+// ════════════════════════════════════════════════════════
+// ENTITÉS (personnages & lieux)
+// ════════════════════════════════════════════════════════
 function addEntity(type) {
-  const iid = type === 'personnages' ? 'perso-input' : 'lieu-input';
-  const inp = document.getElementById(iid);
+  if (!LIVRE_ACTIF) return;
+  const inputId = type === 'personnages' ? 'perso-input' : 'lieu-input';
+  const inp = document.getElementById(inputId);
   const nom = inp.value.trim();
-  if (!nom) { showToast('Écris un nom d\'abord 👆', 'warn'); return; }
-  const entity = { id: uid(), nom, notes:'', couleur: COULEURS[couleurIdx % COULEURS.length] };
+  if (!nom) { showToast('Écris un nom d\'abord', 'warn'); return; }
+  const entity = {
+    id:      'ent_' + Date.now().toString(36) + Math.random().toString(36).slice(2,4),
+    nom, notes:'',
+    couleur: COULEURS[couleurIdx % COULEURS.length]
+  };
   couleurIdx++;
-  DATA[type].push(entity);
+  LIVRE_ACTIF[type].push(entity);
   renderEntity(type, entity);
   inp.value = '';
-  save();
-  setTimeout(() => openEntity(entity.id), 60);
+  sauvegarderBiblio();
+  setTimeout(() => openEntity(entity.id), 80);
 }
 
 function renderEntity(type, entity) {
@@ -328,19 +550,18 @@ function renderEntity(type, entity) {
   div.className = 'entity-item';
   div.id = 'entity-' + entity.id;
   div.innerHTML =
-    '<div class="entity-hd" onclick="toggleEntity(\'' + entity.id + '\')">' +
+    '<div class="entity-header" onclick="toggleEntity(\'' + entity.id + '\')">' +
       '<span class="entity-dot" style="background:' + entity.couleur + '"></span>' +
       '<span class="entity-name">' + esc(entity.nom) + '</span>' +
       '<div class="entity-acts" onclick="event.stopPropagation()">' +
-        '<button class="btn btn-gris btn-xs" onclick="editName(\'' + type + '\',\'' + entity.id + '\')">✏️ Nom</button>' +
-        '<button class="btn btn-rouge btn-xs" onclick="delEntity(\'' + type + '\',\'' + entity.id + '\')">🗑️</button>' +
+        '<button class="btn btn-gris btn-xs" onclick="editEntityName(\'' + type + '\',\'' + entity.id + '\')">✏️</button>' +
+        '<button class="btn btn-rouge btn-xs" onclick="deleteEntity(\'' + type + '\',\'' + entity.id + '\')">🗑️</button>' +
       '</div>' +
       '<span class="entity-chv">▼</span>' +
     '</div>' +
     '<div class="entity-body" id="body-' + entity.id + '">' +
-      '<div style="font-size:.72rem;color:#888;margin:8px 0 4px;font-style:italic;">🎤 Touche la zone, puis utilise le micro du clavier pour dicter.</div>' +
-      '<textarea id="' + taId + '" class="field" rows="7" ' +
-        'placeholder="Rôle dans l\'histoire, caractère, relations avec les autres, comment il change…" ' +
+      '<textarea id="' + taId + '" class="field" rows="6" style="margin-top:10px;"' +
+        'placeholder="Notes sur ' + esc(entity.nom) + ' : rôle, caractère, relations…\n\nDicte avec le micro 🎤 du clavier !"' +
         'oninput="updateNotes(\'' + type + '\',\'' + entity.id + '\',this.value)">' +
         esc(entity.notes) +
       '</textarea>' +
@@ -352,7 +573,7 @@ function toggleEntity(id) {
   const body = document.getElementById('body-' + id);
   if (!body) return;
   const open = body.classList.toggle('open');
-  const chv = document.querySelector('#entity-' + id + ' .entity-chv');
+  const chv  = document.querySelector('#entity-' + id + ' .entity-chv');
   if (chv) chv.style.transform = open ? 'rotate(180deg)' : '';
 }
 function openEntity(id) {
@@ -360,116 +581,226 @@ function openEntity(id) {
   if (body && !body.classList.contains('open')) toggleEntity(id);
 }
 function updateNotes(type, id, val) {
-  const e = DATA[type].find(x => x.id === id);
-  if (e) { e.notes = val; save(); }
+  if (!LIVRE_ACTIF) return;
+  const e = LIVRE_ACTIF[type].find(x => x.id === id);
+  if (e) { e.notes = val; sauvegarderBiblio(); }
 }
-function delEntity(type, id) {
+function deleteEntity(type, id) {
   if (!confirm('Supprimer cette fiche ?')) return;
-  DATA[type] = DATA[type].filter(x => x.id !== id);
-  const el = document.getElementById('entity-' + id);
-  if (el) el.remove();
-  save(); showToast('Fiche supprimée', 'warn');
+  LIVRE_ACTIF[type] = LIVRE_ACTIF[type].filter(x => x.id !== id);
+  document.getElementById('entity-' + id)?.remove();
+  sauvegarderBiblio();
+  showToast('Fiche supprimée', 'warn');
 }
 
 // ── Modal édition nom ──
-let _mt = '', _mi = '';
-function editName(type, id) {
-  const e = DATA[type].find(x => x.id === id);
+let _mType = '', _mId = '';
+function editEntityName(type, id) {
+  const e = LIVRE_ACTIF[type].find(x => x.id === id);
   if (!e) return;
-  _mt = type; _mi = id;
+  _mType = type; _mId = id;
+  document.getElementById('modal-title').textContent = 'Modifier le nom';
   document.getElementById('modal-input').value = e.nom;
-  document.getElementById('modal-ov').classList.add('open');
+  document.getElementById('modal-overlay').classList.add('open');
   setTimeout(() => document.getElementById('modal-input').focus(), 100);
 }
 function confirmModal() {
-  const v = document.getElementById('modal-input').value.trim();
-  if (!v) return;
-  const e = DATA[_mt].find(x => x.id === _mi);
+  const nouv = document.getElementById('modal-input').value.trim();
+  if (!nouv) return;
+  const e = LIVRE_ACTIF[_mType].find(x => x.id === _mId);
   if (e) {
-    e.nom = v;
-    const el = document.querySelector('#entity-' + _mi + ' .entity-name');
-    if (el) el.textContent = v;
-    save(); showToast('Nom modifié !', 'ok');
+    e.nom = nouv;
+    const nameEl = document.querySelector('#entity-' + _mId + ' .entity-name');
+    if (nameEl) nameEl.textContent = nouv;
+    sauvegarderBiblio();
+    showToast('Nom modifié !', 'ok');
   }
   closeModal();
 }
 function closeModal(ev) {
-  if (ev && ev.target !== document.getElementById('modal-ov')) return;
-  document.getElementById('modal-ov').classList.remove('open');
+  if (ev && ev.target !== document.getElementById('modal-overlay')) return;
+  document.getElementById('modal-overlay').classList.remove('open');
 }
-document.getElementById('modal-input').addEventListener('keydown', e => { if (e.key==='Enter') confirmModal(); });
+document.getElementById('modal-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') confirmModal();
+});
 
-// ════════════════════════════════
+// ════════════════════════════════════════════════════════
 // CITATIONS
-// ════════════════════════════════
-function debutCit() {
-  document.getElementById('cit-on').classList.add('show');
-  insertAt('mots-zone', '\n\n« ');
+// ════════════════════════════════════════════════════════
+function debutCitation() {
+  document.getElementById('cit-notice').classList.add('on');
+  insertText('mots-zone', '\n\n« ');
 }
-function finCit() {
-  document.getElementById('cit-on').classList.remove('show');
-  insertAt('mots-zone', ' »\n');
-  save();
+function finCitation() {
+  document.getElementById('cit-notice').classList.remove('on');
+  insertText('mots-zone', ' »\n');
+  saveTexte('mots');
 }
-function insertMot() {
-  insertAt('mots-zone', '\n\n── Mot inconnu ──\n');
-}
-function insertAt(id, txt) {
+function insertSep() { insertText('mots-zone', '\n\n── Mot inconnu ──\n'); }
+function insertText(id, txt) {
   const ta = document.getElementById(id);
-  const p  = ta.selectionStart >= 0 ? ta.selectionStart : ta.value.length;
-  ta.value = ta.value.slice(0, p) + txt + ta.value.slice(p);
-  ta.selectionStart = ta.selectionEnd = p + txt.length;
-  ta.focus(); save();
+  const s  = ta.selectionStart || ta.value.length;
+  ta.value = ta.value.slice(0,s) + txt + ta.value.slice(s);
+  ta.selectionStart = ta.selectionEnd = s + txt.length;
+  ta.focus(); saveTexte('mots');
 }
 
-// ════════════════════════════════
-// EXPORT
-// ════════════════════════════════
+// ════════════════════════════════════════════════════════
+// EXPORT TXT
+// ════════════════════════════════════════════════════════
 function exportTxt() {
-  save();
+  if (!LIVRE_ACTIF) return;
+  const L = LIVRE_ACTIF;
   let t = '════════════════════════════\n   MON GUIDE DE LECTURE\n════════════════════════════\n\n';
-  if (DATA.livre.titre)  t += 'Titre  : ' + DATA.livre.titre  + '\n';
-  if (DATA.livre.auteur) t += 'Auteur : ' + DATA.livre.auteur + '\n';
-  if (DATA.livre.genre)  t += 'Genre  : ' + DATA.livre.genre  + '\n';
-  if (DATA.livre.pages)  t += 'Pages  : ' + DATA.livre.pages  + '\n';
-  if (DATA.livre.annee)  t += 'Époque : ' + DATA.livre.annee  + '\n';
+  t += 'ID      : ' + L.id + '\n';
+  t += 'Créé le : ' + L.dateCreation + '\n\n';
+  if (L.titre)  t += 'Titre  : ' + L.titre  + '\n';
+  if (L.auteur) t += 'Auteur : ' + L.auteur + '\n';
+  if (L.genre)  t += 'Genre  : ' + L.genre  + '\n';
+  if (L.pages)  t += 'Pages  : ' + L.pages  + '\n';
+  if (L.annee)  t += 'Époque : ' + L.annee  + '\n';
   t += '\n';
-  if (DATA.personnages.length) {
+  if (L.personnages.length) {
     t += '── PERSONNAGES ──────────────\n';
-    DATA.personnages.forEach(p => { t += '\n▶ ' + p.nom + '\n' + (p.notes || '(aucune note)') + '\n'; });
+    L.personnages.forEach(p => { t += '\n▶ ' + p.nom + '\n' + (p.notes||'(aucune note)') + '\n'; });
     t += '\n';
   }
-  if (DATA.lieux.length) {
+  if (L.lieux.length) {
     t += '── LIEUX ────────────────────\n';
-    DATA.lieux.forEach(l => { t += '\n▶ ' + l.nom + '\n' + (l.notes || '(aucune note)') + '\n'; });
+    L.lieux.forEach(l => { t += '\n▶ ' + l.nom + '\n' + (l.notes||'(aucune note)') + '\n'; });
     t += '\n';
   }
-  if (DATA.temps)         t += '── ÉPOQUE & CHRONOLOGIE ─────\n' + DATA.temps + '\n\n';
-  if (DATA.mots)          t += '── MOTS & CITATIONS ─────────\n' + DATA.mots  + '\n\n';
-  if (DATA.comprehension) t += '── COMPRÉHENSION & AVIS ─────\n' + DATA.comprehension + '\n\n';
+  if (L.temps)         t += '── ÉPOQUE & CHRONOLOGIE ─────\n' + L.temps + '\n\n';
+  if (L.mots)          t += '── MOTS & CITATIONS ─────────\n' + L.mots  + '\n\n';
+  if (L.comprehension) t += '── COMPRÉHENSION & AVIS ─────\n' + L.comprehension + '\n\n';
 
-  const nom = (DATA.livre.titre||'lecture').replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
+  const nom = (L.titre||'lecture').replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([t], { type:'text/plain;charset=utf-8' }));
-  a.download = 'guide_' + nom + '.txt';
+  a.href = URL.createObjectURL(new Blob([t], {type:'text/plain;charset=utf-8'}));
+  a.download = 'guide_' + nom + '_' + L.dateCreation.replace(/\//g,'-') + '.txt';
   a.click();
   showToast('📄 Fichier téléchargé !', 'ok');
 }
 
-// ════════════════════════════════
+// ════════════════════════════════════════════════════════
+// IMPORT TXT
+// ════════════════════════════════════════════════════════
+function importTxt(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const txt = e.target.result;
+    try {
+      const data = parseTxt(txt);
+      if (!data) { showToast('Fichier non reconnu', 'warn'); return; }
+      // Cherche si ce livre existe déjà par son ID
+      let livre = BIBLIO.livres.find(l => l.id === data.id);
+      if (livre) {
+        // Mise à jour
+        Object.assign(livre, data);
+        showToast('Notes mises à jour !', 'ok');
+      } else {
+        // Nouveau livre importé
+        BIBLIO.livres.push(data);
+        showToast('Livre importé !', 'ok');
+      }
+      sauvegarderBiblio();
+      // Ouvrir le livre importé
+      retourBiblio();
+      setTimeout(() => ouvrirLivre(data.id), 200);
+    } catch(err) {
+      showToast('Erreur à l\'importation', 'warn');
+      console.error(err);
+    }
+    input.value = '';
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+function parseTxt(txt) {
+  const lines = txt.split('\n');
+  const get = (prefix) => {
+    const line = lines.find(l => l.startsWith(prefix));
+    return line ? line.slice(prefix.length).trim() : '';
+  };
+
+  const id          = get('ID      :') || get('ID:');
+  const dateCreation= get('Créé le :') || get('Créé le:');
+  const titre       = get('Titre  :') || get('Titre:');
+  const auteur      = get('Auteur :') || get('Auteur:');
+  const genre       = get('Genre  :') || get('Genre:');
+  const pages       = get('Pages  :') || get('Pages:');
+  const annee       = get('Époque :') || get('Époque:');
+
+  // Sections
+  const section = (marker, nextMarker) => {
+    const start = lines.findIndex(l => l.includes(marker));
+    if (start === -1) return '';
+    const end   = nextMarker ? lines.findIndex((l,i) => i > start && l.includes(nextMarker)) : lines.length;
+    return lines.slice(start+1, end === -1 ? lines.length : end).join('\n').trim();
+  };
+
+  // Parser entités
+  const parseEntites = (bloc) => {
+    if (!bloc) return [];
+    const items = [];
+    const parts = bloc.split(/\n▶ /);
+    parts.forEach(part => {
+      const trimmed = part.trim();
+      if (!trimmed) return;
+      const firstLine = trimmed.split('\n')[0].trim();
+      const rest = trimmed.split('\n').slice(1).join('\n').trim();
+      if (firstLine) {
+        items.push({
+          id:      'ent_' + Date.now().toString(36) + Math.random().toString(36).slice(2,4),
+          nom:     firstLine,
+          notes:   rest === '(aucune note)' ? '' : rest,
+          couleur: COULEURS[items.length % COULEURS.length]
+        });
+      }
+    });
+    return items;
+  };
+
+  const persosBloc = section('── PERSONNAGES ──', '── LIEUX ──');
+  const lieuxBloc  = section('── LIEUX ──', '── ÉPOQUE');
+  const temps      = section('── ÉPOQUE & CHRONOLOGIE ──', '── MOTS');
+  const mots       = section('── MOTS & CITATIONS ──', '── COMPRÉHENSION');
+  const comprehension = section('── COMPRÉHENSION & AVIS ──', null);
+
+  const now = new Date();
+  return {
+    id:            id || ('liv_' + Date.now().toString(36)),
+    titre, auteur, genre, pages, annee,
+    dateCreation:  dateCreation || now.toLocaleDateString('fr-FR'),
+    tsCreation:    now.getTime(),
+    personnages:   parseEntites(persosBloc),
+    lieux:         parseEntites(lieuxBloc),
+    temps, mots, comprehension
+  };
+}
+
+// ════════════════════════════════════════════════════════
 // UTILITAIRES
-// ════════════════════════════════
-function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,5); }
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+// ════════════════════════════════════════════════════════
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 function showToast(msg, type) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.style.background = type==='ok'?'var(--vert)':type==='warn'?'var(--orange)':'#1a1a2e';
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2600);
+  setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-load();
+// ════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════
+chargerBiblio();
+renderBiblio();
 </script>
 </body>
 </html>
