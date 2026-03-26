@@ -124,6 +124,56 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:va
 /* ── HELP ── */
 .help-card{background:var(--jauneC);border:1.5px solid var(--jaune);border-radius:var(--r);padding:14px;margin-bottom:10px;font-size:.8rem;line-height:1.65;color:#555;}
 .help-card b{color:var(--texte);}
+
+/* ── ACCORDÉON AIDE ── */
+.aide-toggle{display:flex;align-items:center;gap:8px;background:var(--jauneC);border:1.5px solid var(--jaune);border-radius:10px;padding:9px 13px;cursor:pointer;font-size:.78rem;font-weight:800;color:#7a5200;margin-bottom:8px;user-select:none;}
+.aide-toggle::after{content:'▼';font-size:.6rem;margin-left:auto;transition:transform .2s;}
+.aide-toggle.open::after{transform:rotate(180deg);}
+.aide-body{display:none;background:var(--jauneC);border:1.5px solid var(--jaune);border-top:none;border-radius:0 0 10px 10px;padding:10px 13px;font-size:.78rem;line-height:1.7;color:#555;margin-top:-10px;margin-bottom:8px;}
+.aide-body.open{display:block;}
+.aide-body b{color:#444;}
+.aide-section{margin-bottom:8px;}
+.aide-section:last-child{margin-bottom:0;}
+
+/* ── MATRICE DES RELATIONS ── */
+.matrice-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:12px;}
+.matrice-table{border-collapse:collapse;font-size:.72rem;min-width:100%;}
+.matrice-table th,.matrice-table td{border:1.5px solid var(--gris2);padding:4px 5px;text-align:center;vertical-align:middle;}
+.matrice-table th{background:var(--bleuC);color:var(--bleu);font-weight:800;font-size:.68rem;white-space:nowrap;max-width:80px;overflow:hidden;text-overflow:ellipsis;}
+.matrice-table th.row-head{text-align:left;padding-left:8px;max-width:90px;}
+.matrice-table td.diag{background:#f5f5f5;cursor:not-allowed;}
+.matrice-rel{font-size:.65rem;border:1.5px solid var(--gris2);border-radius:6px;padding:3px 4px;background:#fff;width:100%;min-width:80px;font-family:inherit;color:var(--texte);cursor:pointer;}
+.matrice-rel:focus{border-color:var(--bleu);outline:none;}
+
+/* ── GRAPHE D3 ── */
+#graphe-container{background:#fff;border-radius:var(--r);box-shadow:var(--ombre);margin-bottom:10px;position:relative;overflow:hidden;}
+#graphe-svg{width:100%;display:block;}
+.graphe-vide{text-align:center;padding:30px;color:#bbb;font-size:.82rem;}
+.link-line{stroke:#aaa;stroke-width:1.5px;fill:none;}
+.link-line.fort{stroke:var(--bleu);stroke-width:2px;}
+.link-line.conflit{stroke:var(--rouge);stroke-width:2px;}
+.link-line.amour{stroke:#e91e8c;stroke-width:2px;}
+.link-label{font-size:9px;fill:#666;text-anchor:middle;pointer-events:none;}
+.node-circle{cursor:grab;stroke:#fff;stroke-width:2px;}
+.node-circle:active{cursor:grabbing;}
+.node-label{font-size:10px;font-weight:700;text-anchor:middle;pointer-events:none;fill:#1a1a2e;}
+
+/* ── SCHÉMA NARRATIF ── */
+.schema-modeles{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.schema-btn{flex:1;min-width:80px;padding:10px 6px;font-size:.75rem;font-weight:800;border:2px solid var(--gris2);border-radius:10px;background:#fff;color:#888;cursor:pointer;transition:all .15s;text-align:center;}
+.schema-btn.active{background:var(--bleu);color:#fff;border-color:var(--bleu);}
+.schema-phases{display:flex;flex-direction:column;gap:8px;}
+.phase-card{border-radius:10px;overflow:hidden;border:1.5px solid var(--gris2);}
+.phase-header{padding:10px 13px;display:flex;align-items:center;gap:8px;cursor:pointer;}
+.phase-num{font-size:.72rem;font-weight:900;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;}
+.phase-nom{font-weight:800;font-size:.88rem;flex:1;}
+.phase-def{font-size:.72rem;color:#fff;opacity:.85;font-style:italic;}
+.phase-chv{color:rgba(255,255,255,.7);font-size:.6rem;transition:transform .2s;}
+.phase-body{display:none;padding:10px 13px;border-top:1px solid var(--gris2);}
+.phase-body.open{display:block;}
+.phase-ta{width:100%;font-family:inherit;font-size:.9rem;font-weight:500;border:2px solid var(--gris2);border-radius:8px;padding:8px 11px;outline:none;color:var(--texte);background:#fff;resize:vertical;min-height:70px;line-height:1.6;}
+.phase-ta:focus{border-color:var(--bleu);}
+.phase-hint{font-size:.7rem;color:#999;font-style:italic;margin-bottom:6px;line-height:1.4;}
 </style>
 </head>
 <body>
@@ -170,6 +220,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:va
     <button class="tab" onclick="showTab('temps',this)">⏳ Temps</button>
     <button class="tab" onclick="showTab('mots',this)">💬 Mots</button>
     <button class="tab" onclick="showTab('comprehension',this)">💭 Avis</button>
+    <button class="tab" onclick="showTab('intrigue',this)">🎭 Intrigue</button>
     <button class="tab" onclick="showTab('redaction',this)">✍️ Rédac</button>
     <button class="tab" onclick="showTab('dissertation',this)">✍️ Dissert</button>
     <button class="tab" onclick="showTab('pdf',this)">🖨️ PDF</button>
@@ -227,6 +278,26 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:va
         </div>
       </div>
       <div class="entity-list" id="list-personnages"></div>
+
+      <!-- MATRICE DES RELATIONS -->
+      <div class="card" id="card-matrice" style="display:none">
+        <div class="card-title" style="color:var(--bleu)">🔗 Relations entre personnages</div>
+        <p style="font-size:.75rem;color:#888;margin-bottom:8px;">Pour chaque paire, choisis le lien de A → B. La relation peut être différente dans le sens inverse.</p>
+        <div class="matrice-wrap" id="matrice-wrap"></div>
+        <button class="btn btn-bleu btn-sm" onclick="renderGraphe()">🔄 Mettre à jour le graphe</button>
+      </div>
+
+      <!-- GRAPHE D3 -->
+      <div class="card" id="card-graphe" style="display:none">
+        <div class="card-title" style="color:var(--bleu)">🕸️ Graphe des relations</div>
+        <div id="graphe-container">
+          <div class="graphe-vide" id="graphe-vide">Ajoute des personnages et remplis la matrice pour voir le graphe</div>
+          <svg id="graphe-svg" style="display:none"></svg>
+        </div>
+        <div style="font-size:.7rem;color:#aaa;margin-top:6px;line-height:1.5;">
+          💡 Glisse les personnages pour réorganiser · Arc simple = relation symétrique · Double arc = relations différentes
+        </div>
+      </div>
     </div>
 
     <!-- LIEUX -->
@@ -239,11 +310,44 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:va
           <button class="btn btn-vert" onclick="addEntity('lieux')">＋</button>
         </div>
       </div>
+
+      <!-- AIDE STRUCTURÉE LIEUX -->
+      <div id="aide-lieux-toggle" class="aide-toggle" onclick="toggleAide('lieux')">
+        💡 Aide : comment analyser un lieu ?
+      </div>
+      <div id="aide-lieux-body" class="aide-body">
+        <div class="aide-section"><b>Espace réel ou symbolique ?</b><br>
+          La maison peut représenter la famille, la prison le déterminisme social, la nature la liberté.</div>
+        <div class="aide-section"><b>Espace ouvert ou fermé ?</b><br>
+          Un espace <em>fermé</em> crée un sentiment d'oppression ou de protection. Un espace <em>ouvert</em> suggère la liberté ou le danger.</div>
+        <div class="aide-section"><b>Mouvements des personnages</b><br>
+          Les déplacements révèlent une quête, une fuite, une progression intérieure.</div>
+        <div class="aide-section"><b>Géographie symbolique</b><br>
+          Ville / campagne · Haut / bas · Intérieur / extérieur — ces oppositions ont souvent un sens idéologique.</div>
+        <div class="aide-section"><b>Questions à poser</b><br>
+          Qui va dans ce lieu ? Pourquoi ? Qu'est-ce qui s'y passe d'important ? Qu'est-ce que ce lieu représente pour le personnage ?</div>
+      </div>
+
       <div class="entity-list" id="list-lieux"></div>
     </div>
 
     <!-- TEMPS -->
     <div class="section" id="sec-temps">
+      <!-- AIDE STRUCTURÉE TEMPS -->
+      <div id="aide-temps-toggle" class="aide-toggle" onclick="toggleAide('temps')">
+        💡 Aide : comment analyser le temps dans un récit ?
+      </div>
+      <div id="aide-temps-body" class="aide-body">
+        <div class="aide-section"><b>📐 L'Ordre</b> — Chronologie vs anachronies<br>
+          L'histoire est-elle racontée dans l'ordre ? Y a-t-il des <em>retours en arrière</em> (flashback / analepse) ou des <em>anticipations</em> (prolepse) ? → Effets : suspense, révélation progressive, surprise.</div>
+        <div class="aide-section"><b>⏱️ La Durée</b> — Rythme narratif<br>
+          Quels moments sont dilatés (racontés lentement) ? Quels moments sont accélérés ou résumés en une phrase (ellipse) ? Certaines scènes s'arrêtent sur un détail (pause descriptive). → Effets : mise en valeur des moments importants.</div>
+        <div class="aide-section"><b>🔁 La Fréquence</b> — Répétitions<br>
+          Certains événements sont-ils racontés une seule fois (singulatif), résumés en « il faisait souvent » (itératif), ou au contraire racontés plusieurs fois (répétitif) ? → Effets : insistance, habitude, obsession.</div>
+        <div class="aide-section"><b>Questions à poser</b><br>
+          Quelle est l'époque du récit ? La narration suit-elle l'ordre des événements ? Quels moments sont les plus longs à lire, et pourquoi ?</div>
+      </div>
+
       <div class="card">
         <div class="card-title" style="color:var(--orange)">⏳ Époque &amp; Chronologie</div>
         <textarea id="temps-text" class="field" rows="14"
@@ -368,6 +472,35 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:va
       </div>
     </div>
 
+
+    <!-- INTRIGUE — SCHÉMA NARRATIF -->
+    <div class="section" id="sec-intrigue">
+      <div class="card" style="border-left:5px solid #00838F">
+        <div class="card-title" style="color:#00838F">🎭 Structure de l'intrigue</div>
+        <p style="font-size:.78rem;color:#888;margin-bottom:12px;">Choisis un modèle narratif, puis remplis chaque phase de l'histoire.</p>
+        <div class="schema-modeles">
+          <button class="schema-btn active" id="sbtn-aristote" onclick="setSchema('aristote',this)">
+            🏛️ Aristote<br><span style="font-size:.62rem;font-weight:500">3 actes</span>
+          </button>
+          <button class="schema-btn" id="sbtn-freytag" onclick="setSchema('freytag',this)">
+            🔺 Freytag<br><span style="font-size:.62rem;font-weight:500">5 actes</span>
+          </button>
+          <button class="schema-btn" id="sbtn-moderne" onclick="setSchema('moderne',this)">
+            🌊 Arc moderne<br><span style="font-size:.62rem;font-weight:500">8 étapes</span>
+          </button>
+        </div>
+      </div>
+      <div class="schema-phases" id="schema-phases"></div>
+
+      <div class="card" style="background:var(--jauneC);border:1.5px solid var(--jaune)">
+        <div class="card-title" style="color:var(--jaune)">💡 À quoi servent ces modèles ?</div>
+        <p style="font-size:.78rem;line-height:1.65;color:#555;">
+          <b>Aristote (3 actes)</b> : le plus simple — début, milieu, fin. Parfait pour un premier résumé.<br>
+          <b>Freytag (5 actes)</b> : montre comment la tension monte puis redescend (pyramide).<br>
+          <b>Arc moderne (8 étapes)</b> : le plus précis — donne un mot sur chaque moment clé du récit.
+        </p>
+      </div>
+    </div>
 
     <!-- RÉDACTION -->
     <div class="section" id="sec-redaction">
@@ -732,7 +865,10 @@ function creerNouveauLivreObj(titre, auteur, genre) {
     lieux:         [],
     temps:         '',
     mots:          '',
-    comprehension: ''
+    comprehension: '',
+    matrice:       {},
+    narration:     {},
+    schemaType:    'aristote'
   };
 }
 
@@ -799,6 +935,9 @@ function ouvrirLivre(id) {
   livre.personnages.forEach(p => renderEntity('personnages', p));
   livre.lieux.forEach(l => renderEntity('lieux', l));
 
+  // Matrice & graphe des relations
+  renderMatrice();
+
   // Basculer écrans
   document.getElementById('screen-biblio').style.display = 'none';
   document.getElementById('screen-guide').style.display  = 'flex';
@@ -807,6 +946,8 @@ function ouvrirLivre(id) {
   showTab('livre', document.querySelector('.tab'));
   // Charger les zones de rédaction
   setTimeout(loadRedac, 50);
+  // Charger le schéma narratif
+  setTimeout(loadIntrigue, 50);
 }
 
 function retourBiblio() {
@@ -880,6 +1021,8 @@ function addEntity(type) {
   inp.value = '';
   sauvegarderBiblio();
   setTimeout(() => openEntity(entity.id), 80);
+  // Mettre à jour la matrice si c'est un personnage
+  if (type === 'personnages') setTimeout(renderMatrice, 100);
 }
 
 function renderEntity(type, entity) {
@@ -930,6 +1073,7 @@ function deleteEntity(type, id) {
   document.getElementById('entity-' + id)?.remove();
   sauvegarderBiblio();
   showToast('Fiche supprimée', 'warn');
+  if (type === 'personnages') setTimeout(renderMatrice, 100);
 }
 
 // ── Modal édition nom ──
@@ -1477,11 +1621,355 @@ ${redacSection}
 }
 
 // ════════════════════════════════════════════════════════
+// AIDE ACCORDÉON (Lieux / Temps)
+// ════════════════════════════════════════════════════════
+function toggleAide(zone) {
+  const toggle = document.getElementById('aide-' + zone + '-toggle');
+  const body   = document.getElementById('aide-' + zone + '-body');
+  if (!toggle || !body) return;
+  toggle.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+// ════════════════════════════════════════════════════════
+// MATRICE DES RELATIONS
+// ════════════════════════════════════════════════════════
+const RELATIONS = [
+  '—',
+  'Ami(e)', 'Meilleur(e) ami(e)', 'Allié(e)',
+  'Amoureux/se', 'Rival(e)', 'Antagoniste', 'Ennemi(e)',
+  'Confident(e)', 'Mentor', 'Élève', 'Protecteur/trice',
+  'Protégé(e)', 'Parent', 'Enfant', 'Frère/Sœur',
+  'Témoin', 'Repoussoir', 'Complice', 'Victime'
+];
+
+function getMatrice() {
+  if (!LIVRE_ACTIF) return {};
+  if (!LIVRE_ACTIF.matrice) LIVRE_ACTIF.matrice = {};
+  return LIVRE_ACTIF.matrice;
+}
+
+function renderMatrice() {
+  const persos = LIVRE_ACTIF?.personnages || [];
+  const cardMatrice = document.getElementById('card-matrice');
+  const cardGraphe  = document.getElementById('card-graphe');
+  if (persos.length < 2) {
+    cardMatrice.style.display = 'none';
+    cardGraphe.style.display  = 'none';
+    return;
+  }
+  cardMatrice.style.display = 'block';
+  cardGraphe.style.display  = 'block';
+  const matrice = getMatrice();
+  const wrap = document.getElementById('matrice-wrap');
+
+  const opts = RELATIONS.map(r => `<option value="${r}">${r}</option>`).join('');
+  let html = '<table class="matrice-table"><thead><tr><th class="row-head">A → B</th>';
+  persos.forEach(p => { html += `<th title="${esc(p.nom)}">${esc(p.nom.length > 8 ? p.nom.slice(0,7)+'…' : p.nom)}</th>`; });
+  html += '</tr></thead><tbody>';
+
+  persos.forEach((pa, i) => {
+    html += `<tr><th class="row-head" title="${esc(pa.nom)}">${esc(pa.nom.length > 10 ? pa.nom.slice(0,9)+'…' : pa.nom)}</th>`;
+    persos.forEach((pb, j) => {
+      if (i === j) {
+        html += `<td class="diag" title="${esc(pa.nom)} ↔ lui-même">·</td>`;
+      } else {
+        const key = pa.id + '__' + pb.id;
+        const val = matrice[key] || '—';
+        html += `<td><select class="matrice-rel" data-key="${key}" onchange="saveMatriceCell(this)">${opts.replace(`value="${val}"`, `value="${val}" selected`)}</select></td>`;
+      }
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+  renderGraphe();
+}
+
+function saveMatriceCell(sel) {
+  if (!LIVRE_ACTIF) return;
+  if (!LIVRE_ACTIF.matrice) LIVRE_ACTIF.matrice = {};
+  LIVRE_ACTIF.matrice[sel.dataset.key] = sel.value;
+  sauvegarderBiblio();
+  renderGraphe();
+}
+
+// ════════════════════════════════════════════════════════
+// GRAPHE D3
+// ════════════════════════════════════════════════════════
+let d3Loaded = false;
+function loadD3(cb) {
+  if (d3Loaded) { cb(); return; }
+  const s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js';
+  s.onload = () => { d3Loaded = true; cb(); };
+  document.head.appendChild(s);
+}
+
+function renderGraphe() {
+  loadD3(() => _buildGraphe());
+}
+
+function _buildGraphe() {
+  const persos  = LIVRE_ACTIF?.personnages || [];
+  const matrice = getMatrice();
+  const svg     = document.getElementById('graphe-svg');
+  const vide    = document.getElementById('graphe-vide');
+  svg.innerHTML = '';
+
+  if (persos.length < 2) {
+    svg.style.display = 'none';
+    vide.style.display = 'block';
+    return;
+  }
+
+  // Construire les liens
+  const links = [];
+  persos.forEach((pa, i) => {
+    persos.forEach((pb, j) => {
+      if (i >= j) return;
+      const kAB = pa.id + '__' + pb.id;
+      const kBA = pb.id + '__' + pa.id;
+      const rAB = matrice[kAB] || '—';
+      const rBA = matrice[kBA] || '—';
+      const hasAB = rAB !== '—';
+      const hasBA = rBA !== '—';
+      if (!hasAB && !hasBA) return;
+      const sym = hasAB && hasBA && rAB === rBA;
+      if (sym) {
+        links.push({ source: pa.id, target: pb.id, label: rAB, bidirect: false });
+      } else {
+        if (hasAB) links.push({ source: pa.id, target: pb.id, label: rAB, bidirect: hasBA });
+        if (hasBA) links.push({ source: pb.id, target: pa.id, label: rBA, bidirect: hasAB });
+      }
+    });
+  });
+
+  // Dimensions
+  const W = document.getElementById('graphe-container').clientWidth || 340;
+  const H = Math.max(220, Math.min(380, persos.length * 55));
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.style.display = 'block';
+  vide.style.display = 'none';
+
+  const d3svg = d3.select(svg);
+
+  // Defs flèches
+  const defs = d3svg.append('defs');
+  const mkArrow = (id, col) => {
+    defs.append('marker').attr('id', id)
+      .attr('viewBox','0 0 10 10').attr('refX',18).attr('refY',5)
+      .attr('markerWidth',5).attr('markerHeight',5).attr('orient','auto-start-reverse')
+      .append('path').attr('d','M0 1 L8 5 L0 9').attr('fill', col);
+  };
+  mkArrow('arr-std','#aaa');
+  mkArrow('arr-bleu', '#2E5FA3');
+  mkArrow('arr-rouge','#c0392b');
+  mkArrow('arr-rose', '#e91e8c');
+
+  const g = d3svg.append('g');
+
+  // Noeuds
+  const nodes = persos.map(p => ({
+    id: p.id, nom: p.nom, couleur: p.couleur,
+    x: W/2 + Math.cos(2*Math.PI*(persos.indexOf(p)/persos.length)) * (W*0.32),
+    y: H/2 + Math.sin(2*Math.PI*(persos.indexOf(p)/persos.length)) * (H*0.35)
+  }));
+  const nodeMap = {};
+  nodes.forEach(n => { nodeMap[n.id] = n; });
+
+  // Liens
+  const linkG = g.append('g').attr('class','links');
+  links.forEach((lk, idx) => {
+    const sn = nodeMap[lk.source];
+    const tn = nodeMap[lk.target];
+    if (!sn || !tn) return;
+
+    // Courbure si bidirectionnel avec label différent
+    const curve = lk.bidirect ? 25 : 0;
+    const mid = { x:(sn.x+tn.x)/2, y:(sn.y+tn.y)/2 };
+    const dx = tn.x - sn.x, dy = tn.y - sn.y;
+    const len = Math.sqrt(dx*dx+dy*dy) || 1;
+    const cx = mid.x - dy/len*curve;
+    const cy = mid.y + dx/len*curve;
+
+    const ltype = detectLinkType(lk.label);
+    const arrId = ltype === 'conflit' ? 'arr-rouge' : ltype === 'amour' ? 'arr-rose' : ltype === 'fort' ? 'arr-bleu' : 'arr-std';
+    const stroke = ltype === 'conflit' ? '#c0392b' : ltype === 'amour' ? '#e91e8c' : ltype === 'fort' ? '#2E5FA3' : '#bbb';
+
+    const path = linkG.append('path')
+      .attr('class', 'link-line ' + ltype)
+      .attr('d', curve ? `M${sn.x},${sn.y} Q${cx},${cy} ${tn.x},${tn.y}` : `M${sn.x},${sn.y} L${tn.x},${tn.y}`)
+      .attr('stroke', stroke)
+      .attr('marker-end', `url(#${arrId})`);
+
+    // Label sur le lien
+    if (lk.label && lk.label !== '—') {
+      linkG.append('text').attr('class','link-label')
+        .attr('x', cx || mid.x).attr('y', (cy || mid.y) - 4)
+        .attr('fill', stroke).text(lk.label)
+        .style('font-size','9px');
+    }
+  });
+
+  // Noeuds cercles + labels
+  const nodeG = g.append('g').attr('class','noeuds');
+  nodes.forEach(n => {
+    const ng = nodeG.append('g').attr('transform', `translate(${n.x},${n.y})`).attr('class','node-g').style('cursor','grab');
+    ng.append('circle').attr('r', 18).attr('fill', n.couleur).attr('class','node-circle');
+    ng.append('text').attr('class','node-label').attr('y', 30).text(n.nom.length > 9 ? n.nom.slice(0,8)+'…' : n.nom).attr('fill','#1a1a2e');
+
+    // Initiales dans le cercle
+    const ini = n.nom.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    ng.append('text').attr('text-anchor','middle').attr('dominant-baseline','central').attr('fill','#fff').attr('font-size','10px').attr('font-weight','800').text(ini);
+
+    // Drag
+    ng.call(d3.drag()
+      .on('drag', function(event) {
+        n.x = Math.max(20, Math.min(W-20, event.x));
+        n.y = Math.max(20, Math.min(H-20, event.y));
+        ng.attr('transform', `translate(${n.x},${n.y})`);
+        _buildGraphe();
+      })
+    );
+  });
+}
+
+function detectLinkType(label) {
+  if (!label) return 'std';
+  const l = label.toLowerCase();
+  if (l.includes('ennemi') || l.includes('antag') || l.includes('rival') || l.includes('conflit')) return 'conflit';
+  if (l.includes('amour') || l.includes('amoureux')) return 'amour';
+  if (l.includes('meilleur') || l.includes('allié') || l.includes('mentor')) return 'fort';
+  return 'std';
+}
+
+// ════════════════════════════════════════════════════════
+// SCHÉMA NARRATIF
+// ════════════════════════════════════════════════════════
+const SCHEMAS = {
+  aristote: {
+    couleur: '#1565C0',
+    phases: [
+      { key:'nar_a1', num:1, nom:'Début — Exposition',   def:'Présente les personnages, le cadre et la situation initiale.',
+        hint:'Qui ? Où ? Quand ? Quel est le monde au début de l\'histoire ?' },
+      { key:'nar_a2', num:2, nom:'Milieu — Conflit',     def:'Les personnages agissent, rencontrent des obstacles.',
+        hint:'Quel problème surgit ? Quelles difficultés le héros traverse-t-il ?' },
+      { key:'nar_a3', num:3, nom:'Fin — Résolution',     def:'Le conflit trouve sa résolution. La tension retombe.',
+        hint:'Comment le problème est-il résolu ? Qu\'est-ce qui a changé ?' },
+    ]
+  },
+  freytag: {
+    couleur: '#6A1B9A',
+    phases: [
+      { key:'nar_f1', num:1, nom:'Exposition',           def:'Présentation du cadre et des personnages.',
+        hint:'Qui sont les personnages principaux ? Où et quand l\'histoire se passe-t-elle ?' },
+      { key:'nar_f2', num:2, nom:'Action montante',      def:'Tensions et complications qui font monter l\'intensité.',
+        hint:'Quels obstacles et péripéties augmentent la tension ?' },
+      { key:'nar_f3', num:3, nom:'Climax',               def:'Point de non-retour — tension maximale.',
+        hint:'Quel est le moment le plus fort de l\'histoire ? Le tournant décisif ?' },
+      { key:'nar_f4', num:4, nom:'Action descendante',   def:'Les conséquences du climax se déroulent.',
+        hint:'Que se passe-t-il après le climax ? La tension commence à baisser.' },
+      { key:'nar_f5', num:5, nom:'Dénouement',           def:'Résolution finale — le nœud narratif se défait.',
+        hint:'Comment tout se termine-t-il ? Qu\'arrive-t-il aux personnages ?' },
+    ]
+  },
+  moderne: {
+    couleur: '#00695C',
+    phases: [
+      { key:'nar_m1', num:1, nom:'Exposition',           def:'Le monde ordinaire du personnage avant l\'histoire.',
+        hint:'Qui est le héros dans sa vie de tous les jours ?' },
+      { key:'nar_m2', num:2, nom:'Élément déclencheur',  def:'L\'événement qui met l\'histoire en mouvement.',
+        hint:'Qu\'est-ce qui brise l\'équilibre et oblige le héros à agir ?' },
+      { key:'nar_m3', num:3, nom:'Péripéties',           def:'Complications et obstacles croissants.',
+        hint:'Quelles aventures et difficultés rencontre le héros ?' },
+      { key:'nar_m4', num:4, nom:'Crise',                def:'Le moment de la décision la plus difficile.',
+        hint:'Face à quel choix impossible le héros est-il placé ?' },
+      { key:'nar_m5', num:5, nom:'Climax',               def:'Tension maximale — le tournant irréversible.',
+        hint:'Quel est le moment culminant, le plus intense de l\'histoire ?' },
+      { key:'nar_m6', num:6, nom:'Action descendante',   def:'Les conséquences immédiates du climax.',
+        hint:'Comment la situation évolue-t-elle après le climax ?' },
+      { key:'nar_m7', num:7, nom:'Dénouement',           def:'Le conflit principal est résolu.',
+        hint:'Comment se résout le problème central ? Qui gagne, qui perd ?' },
+      { key:'nar_m8', num:8, nom:'Situation finale',     def:'Nouvel équilibre — le monde transformé.',
+        hint:'Comment les choses sont-elles à la fin ? Qu\'a appris le héros ?' },
+    ]
+  }
+};
+
+let schemaActif = 'aristote';
+
+function setSchema(type, btnEl) {
+  schemaActif = type;
+  document.querySelectorAll('.schema-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  if (LIVRE_ACTIF) { LIVRE_ACTIF.schemaType = type; sauvegarderBiblio(); }
+  renderSchemaPhases();
+}
+
+function renderSchemaPhases() {
+  const schema  = SCHEMAS[schemaActif];
+  const narr    = LIVRE_ACTIF?.narration || {};
+  const phases  = document.getElementById('schema-phases');
+  phases.innerHTML = '';
+
+  schema.phases.forEach(ph => {
+    const col     = schema.couleur;
+    const colLite = col + '18';
+    const div = document.createElement('div');
+    div.className = 'phase-card';
+    div.id = 'phase-' + ph.key;
+    div.style.borderColor = col;
+    div.innerHTML =
+      `<div class="phase-header" style="background:${col}" onclick="togglePhase('${ph.key}')">` +
+        `<span class="phase-num" style="background:rgba(255,255,255,.25)">${ph.num}</span>` +
+        `<div style="flex:1">` +
+          `<div class="phase-nom">${ph.nom}</div>` +
+          `<div class="phase-def">${ph.def}</div>` +
+        `</div>` +
+        `<span class="phase-chv">▼</span>` +
+      `</div>` +
+      `<div class="phase-body" id="phasebody-${ph.key}">` +
+        `<div class="phase-hint">${ph.hint}</div>` +
+        `<textarea class="phase-ta" rows="3" placeholder="Écris ou dicte ce qui se passe dans cette phase…" ` +
+          `oninput="saveNarration('${ph.key}',this.value)">${esc(narr[ph.key] || '')}</textarea>` +
+      `</div>`;
+    phases.appendChild(div);
+  });
+}
+
+function togglePhase(key) {
+  const body = document.getElementById('phasebody-' + key);
+  const chv  = document.querySelector('#phase-' + key + ' .phase-chv');
+  if (!body) return;
+  const open = body.classList.toggle('open');
+  if (chv) chv.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+function saveNarration(key, val) {
+  if (!LIVRE_ACTIF) return;
+  if (!LIVRE_ACTIF.narration) LIVRE_ACTIF.narration = {};
+  LIVRE_ACTIF.narration[key] = val;
+  sauvegarderBiblio();
+}
+
+function loadIntrigue() {
+  if (!LIVRE_ACTIF) return;
+  const type = LIVRE_ACTIF.schemaType || 'aristote';
+  schemaActif = type;
+  document.querySelectorAll('.schema-btn').forEach(b => b.classList.remove('active'));
+  const activeBtn = document.getElementById('sbtn-' + type);
+  if (activeBtn) activeBtn.classList.add('active');
+  renderSchemaPhases();
+}
+
+// ════════════════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════════════════
 chargerBiblio();
 renderBiblio();
 initRedacZones();
+renderSchemaPhases();
 </script>
 </body>
 </html>
