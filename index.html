@@ -335,16 +335,127 @@ let couleurIdx  = 0;
 function sauvegarderBiblio() {
   try { localStorage.setItem('axel_biblio', JSON.stringify(BIBLIO)); } catch(e){}
 }
+
+// ════════════════════════════════════════════════════════
+// LIVRES DE DÉMONSTRATION (pré-chargés au 1er lancement)
+// ════════════════════════════════════════════════════════
+const LIVRES_DEMO = [
+  {
+    id: 'liv_petit_prince_001',
+    titre: 'Le Petit Prince',
+    auteur: 'Antoine de Saint-Exupéry',
+    genre: 'Conte philosophique',
+    pages: '96',
+    annee: 'Années 1940',
+    dateCreation: '10/01/2026',
+    tsCreation: 1736467200000,
+    personnages: [
+      { id:'ent_pp_01', nom:'Le Petit Prince', couleur:'#2E5FA3',
+        notes:"Personnage principal. Petit garçon venu de l'astéroïde B-612. Curieux, sensible, il pose des questions très profondes. Il aime sa rose malgré ses caprices. Il apprend la valeur de l'amitié avec le renard." },
+      { id:'ent_pp_02', nom:'Le narrateur (l\'aviateur)', couleur:'#2E7D32',
+        notes:"Pilote tombé en panne dans le Sahara. Il rencontre le Petit Prince et retrouve son âme d'enfant. C'est lui qui raconte l'histoire." },
+      { id:'ent_pp_03', nom:'La Rose', couleur:'#c0392b',
+        notes:"Fleur unique sur la planète du Petit Prince. Belle mais vaniteuse et capricieuse. Il l'aime profondément malgré ses défauts. Elle représente l'amour et la fragilité." },
+      { id:'ent_pp_04', nom:'Le Renard', couleur:'#E65100',
+        notes:"Personnage sage rencontré sur Terre. Il apprend au Petit Prince le secret de l'amitié : apprivoiser. Sa phrase célèbre : On ne voit bien qu'avec le coeur." },
+      { id:'ent_pp_05', nom:'Le Serpent', couleur:'#6A1B9A',
+        notes:"Mystérieux serpent rencontré à l'arrivée sur Terre. Il parle par énigmes. C'est lui qui permettra au Petit Prince de rentrer chez lui à la fin." }
+    ],
+    lieux: [
+      { id:'ent_pp_l1', nom:'L\'astéroïde B-612', couleur:'#2E5FA3',
+        notes:"Minuscule planète du Petit Prince. Si petite qu'on peut voir le coucher de soleil plusieurs fois par jour. Il y a trois volcans et une rose unique." },
+      { id:'ent_pp_l2', nom:'Le désert du Sahara', couleur:'#2E7D32',
+        notes:"Lieu sur Terre où l'aviateur tombe en panne. C'est là qu'il rencontre le Petit Prince. Le désert représente la solitude mais aussi la beauté des choses essentielles." },
+      { id:'ent_pp_l3', nom:'Les autres planètes', couleur:'#E65100',
+        notes:"Le Petit Prince visite 6 planètes avant la Terre : le roi, le vaniteux, le buveur, le businessman, l'allumeur de réverbères, le géographe. Chaque planète représente un défaut des adultes." }
+    ],
+    temps: "L'histoire se passe dans les années 1940. La narration commence par le souvenir d'enfance de l'aviateur, puis sa panne dans le Sahara. Le Petit Prince lui raconte ses voyages. L'histoire dure 8 jours dans le désert. La fin est mystérieuse : le Petit Prince disparaît avec le serpent pour rentrer chez lui.",
+    mots: "── Mot inconnu ──\nApprivoiser : créer des liens, rendre quelqu'un familier.\n\n── Mot inconnu ──\nBaobab : très grand arbre d'Afrique. Dangereux sur la planète du Petit Prince car ses racines peuvent tout envahir.\n\n« On ne voit bien qu'avec le cœur. L'essentiel est invisible pour les yeux. »\n(Le Renard, chapitre 21)\n\n« C'est le temps que tu as perdu pour ta rose qui fait ta rose si importante. »\n(Le Renard, chapitre 21)",
+    comprehension: "Livre très court mais très profond. Il parle aux enfants et aux adultes en même temps. Le message principal : les adultes oublient ce qui est vraiment important — l'amitié, l'amour, la beauté des choses simples. La fin est triste car on ne sait pas vraiment si le Petit Prince est mort ou rentré chez lui. Passage préféré : quand le renard explique ce que veut dire apprivoiser."
+  },
+  {
+    id: 'liv_tom_sawyer_002',
+    titre: 'Les Aventures de Tom Sawyer',
+    auteur: 'Mark Twain',
+    genre: 'Roman d\'aventure',
+    pages: '274',
+    annee: 'Vers 1840, Missouri, États-Unis',
+    dateCreation: '25/02/2026',
+    tsCreation: 1740441600000,
+    personnages: [
+      { id:'ent_ts_01', nom:'Tom Sawyer', couleur:'#2E5FA3',
+        notes:"Personnage principal. Garçon espiègle et imaginatif d'environ 12 ans. Vit chez sa tante Polly. Souvent en retenue mais très courageux quand c'est nécessaire. Amoureux de Becky Thatcher." },
+      { id:'ent_ts_02', nom:'Huckleberry Finn', couleur:'#2E7D32',
+        notes:"Meilleur ami de Tom. Fils d'un ivrogne, il vit en liberté sans aller à l'école. Les autres enfants l'envient. Loyal et courageux malgré son apparence négligée." },
+      { id:'ent_ts_03', nom:'Tante Polly', couleur:'#c0392b',
+        notes:"Tante de Tom qui l'élève avec amour mais fermeté. Souvent exaspérée par ses bêtises mais l'aime profondément. Elle représente la figure maternelle." },
+      { id:'ent_ts_04', nom:'Becky Thatcher', couleur:'#E65100',
+        notes:"Fille du juge Thatcher dont Tom est amoureux. Jolie et douce. Tom et Becky se perdent ensemble dans la grotte de McDougal, moment le plus dramatique du livre." },
+      { id:'ent_ts_05', nom:'Joe l\'Indien', couleur:'#6A1B9A',
+        notes:"Grand méchant du roman. Meurtrier cruel et vengeur. Tom l'a vu commettre un crime dans le cimetière. Il représente le danger tout au long du roman." }
+    ],
+    lieux: [
+      { id:'ent_ts_l1', nom:'Saint Petersburg', couleur:'#2E5FA3',
+        notes:"Village fictif au bord du Mississippi où se déroule l'essentiel de l'histoire. Inspiré de Hannibal, la ville natale de Mark Twain." },
+      { id:'ent_ts_l2', nom:"L'île de Jackson", couleur:'#2E7D32',
+        notes:"Île sur le Mississippi où Tom, Huck et Joe Harper s'enfuient pour jouer aux pirates. Tout le village les croit noyés." },
+      { id:'ent_ts_l3', nom:'La grotte de McDougal', couleur:'#c0392b',
+        notes:"Grotte immense et labyrinthique près du village. Tom et Becky s'y perdent pendant plusieurs jours. Joe l'Indien y est caché. Moment le plus angoissant du roman." }
+    ],
+    temps: "L'histoire se passe vers 1840 dans le Missouri, au bord du Mississippi. Narration chronologique. Événements principaux : la clôture blanchie, la nuit au cimetière où Tom voit le meurtre, la fugue sur l'île des pirates, le procès du docteur Robinson, la disparition dans la grotte et la découverte du trésor de Joe l'Indien.",
+    mots: "── Mot inconnu ──\nEspiègle : qui aime faire des farces, malicieux mais sans méchanceté.\n\n── Mot inconnu ──\nLabyrinthique : comme un labyrinthe, avec des couloirs dans tous les sens où on se perd facilement.\n\n« Tom dit à lui-même que la vie n'était décidément pas si mauvaise. »\n(après avoir convaincu ses amis de badigeonner la clôture à sa place)",
+    comprehension: "Roman très amusant et plein d'aventures. Tom est attachant car il fait des bêtises mais est courageux quand c'est vraiment important. La scène dans la grotte est la plus impressionnante. Message : l'enfance est une période de liberté et d'imagination précieuse. Mark Twain se moque gentiment des adultes et de leurs règles. Scène préférée : la clôture où Tom convainc ses amis de faire son travail à sa place."
+  },
+  {
+    id: 'liv_alice_merveilles_003',
+    titre: 'Alice au Pays des Merveilles',
+    auteur: 'Lewis Carroll',
+    genre: 'Fantastique / Conte',
+    pages: '182',
+    annee: 'Angleterre victorienne, 1865',
+    dateCreation: '15/03/2026',
+    tsCreation: 1742000000000,
+    personnages: [
+      { id:'ent_al_01', nom:'Alice', couleur:'#2E5FA3',
+        notes:"Personnage principal. Petite fille curieuse et courageuse d'environ 7 ans. Elle tombe dans un terrier de lapin et découvre un monde impossible. Elle garde son bon sens face à l'absurdité du Pays des Merveilles." },
+      { id:'ent_al_02', nom:'Le Lapin Blanc', couleur:'#2E7D32',
+        notes:"Lapin en habit qui regarde sa montre en criant Je suis en retard ! C'est lui qu'Alice suit. Il représente le temps qui passe et l'urgence." },
+      { id:'ent_al_03', nom:'La Reine de Coeur', couleur:'#c0392b',
+        notes:"Reine tyrannique qui crie Qu'on lui coupe la tête ! Elle représente le pouvoir absurde et injuste. Alice finit par ne plus en avoir peur." },
+      { id:'ent_al_04', nom:'Le Chapelier Fou', couleur:'#E65100',
+        notes:"Personnage excentrique bloqué dans une fête du thé interminable. Dit des choses sans sens qui cachent parfois une vérité. Un des personnages les plus célèbres." },
+      { id:'ent_al_05', nom:'Le Chat du Cheshire', couleur:'#6A1B9A',
+        notes:"Chat qui peut disparaître en ne laissant que son sourire. Donne des conseils énigmatiques. Sa phrase : Nous sommes tous fous ici." }
+    ],
+    lieux: [
+      { id:'ent_al_l1', nom:'Le terrier du lapin', couleur:'#2E5FA3',
+        notes:"Entrée dans le Pays des Merveilles. Alice tombe très longtemps avant d'arriver dans un couloir avec des portes. Elle doit rapetisser ou grandir pour passer les portes." },
+      { id:'ent_al_l2', nom:"La maison du Chapelier", couleur:'#2E7D32',
+        notes:"Lieu de la fête du thé interminable. Le Chapelier, le Lièvre de Mars et le Loir sont bloqués là pour toujours à cause d'une dispute avec le Temps." },
+      { id:'ent_al_l3', nom:'Le palais de la Reine', couleur:'#c0392b',
+        notes:"Château où la Reine joue au croquet avec des flamants roses comme maillets et des hérissons comme boules. Tout est absurde. C'est là que se passe le procès final." }
+    ],
+    temps: "L'histoire se passe en Angleterre victorienne vers 1865. La structure est celle d'un rêve : Alice s'endort puis tout enchaîne de manière illogique. Elle grandit, rapetisse, change sans arrêt. Il n'y a pas d'ordre logique dans les aventures, c'est voulu. Le livre se termine quand Alice se réveille.",
+    mots: "── Mot inconnu ──\nAbsurde : qui n'a aucun sens logique, complètement illogique.\n\n── Mot inconnu ──\nExcentrique : quelqu'un qui se comporte de façon bizarre et originale.\n\n« Nous sommes tous fous ici. Je suis fou. Tu es folle. »\n(Le Chat du Cheshire)\n\n« Il est impossible de croire à des choses impossibles. »\n(La Reine de Coeur)",
+    comprehension: "Livre très bizarre mais fascinant. On ne comprend pas tout mais c'est fait exprès. Le Pays des Merveilles représente un monde où les règles des adultes n'existent plus. Alice doit se débrouiller seule dans un monde sans sens. Message caché : le monde des adultes est aussi absurde, on y est juste habitué. Personnage préféré : le Chat du Cheshire, mystérieux et ses conseils sont étranges mais vrais."
+  }
+];
 function chargerBiblio() {
   try {
     const raw = localStorage.getItem('axel_biblio');
-    if (raw) BIBLIO = JSON.parse(raw);
-    // Migration depuis ancien format v5
-    const oldData = localStorage.getItem('axel_guide_v5');
-    if (oldData && !BIBLIO.livres.length) {
-      migrerAncienFormat(JSON.parse(oldData));
+    if (raw) {
+      BIBLIO = JSON.parse(raw);
+    } else {
+      // Premier lancement : charger les livres de démonstration
+      const oldData = localStorage.getItem('axel_guide_v5');
+      if (oldData) {
+        migrerAncienFormat(JSON.parse(oldData));
+      } else {
+        BIBLIO.livres = JSON.parse(JSON.stringify(LIVRES_DEMO));
+        sauvegarderBiblio();
+      }
     }
-  } catch(e){}
+  } catch(e) { console.error(e); }
 }
 
 function migrerAncienFormat(old) {
