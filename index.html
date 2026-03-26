@@ -160,15 +160,18 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:va
 
 /* ── SCHÉMA NARRATIF ── */
 .schema-modeles{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
-.schema-btn{flex:1;min-width:80px;padding:10px 6px;font-size:.75rem;font-weight:800;border:2px solid var(--gris2);border-radius:10px;background:#fff;color:#888;cursor:pointer;transition:all .15s;text-align:center;}
-.schema-btn.active{background:var(--bleu);color:#fff;border-color:var(--bleu);}
+.schema-btn{flex:1;min-width:80px;padding:10px 6px;font-size:.75rem;font-weight:800;border:2px solid var(--gris2);border-radius:10px;background:#fff;color:#555;cursor:pointer;transition:all .15s;text-align:center;line-height:1.4;}
+.schema-btn.active{background:var(--bleu);color:#fff!important;border-color:var(--bleu);}
+.schema-btn.active span{color:#fff!important;}
+.schema-modeles{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
 .schema-phases{display:flex;flex-direction:column;gap:8px;}
 .phase-card{border-radius:10px;overflow:hidden;border:1.5px solid var(--gris2);}
 .phase-header{padding:10px 13px;display:flex;align-items:center;gap:8px;cursor:pointer;}
-.phase-num{font-size:.72rem;font-weight:900;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;}
-.phase-nom{font-weight:800;font-size:.88rem;flex:1;}
-.phase-def{font-size:.72rem;color:#fff;opacity:.85;font-style:italic;}
-.phase-chv{color:rgba(255,255,255,.7);font-size:.6rem;transition:transform .2s;}
+.phase-header *{color:#fff!important;}
+.phase-num{font-size:.72rem;font-weight:900;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(255,255,255,.22);color:#fff!important;}
+.phase-nom{font-weight:800;font-size:.88rem;flex:1;color:#fff!important;}
+.phase-def{font-size:.72rem;opacity:.88;font-style:italic;color:#fff!important;}
+.phase-chv{font-size:.6rem;transition:transform .2s;color:rgba(255,255,255,.8)!important;}
 .phase-body{display:none;padding:10px 13px;border-top:1px solid var(--gris2);}
 .phase-body.open{display:block;}
 .phase-ta{width:100%;font-family:inherit;font-size:.9rem;font-weight:500;border:2px solid var(--gris2);border-radius:8px;padding:8px 11px;outline:none;color:var(--texte);background:#fff;resize:vertical;min-height:70px;line-height:1.6;}
@@ -241,6 +244,33 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:va
           <input id="livre-pages"  class="field" type="text" placeholder="Nb de pages…" oninput="saveLivre()">
           <input id="livre-annee"  class="field" type="text" placeholder="Époque…"       oninput="saveLivre()">
         </div>
+      </div>
+
+      <!-- ZONE 1 : CONTEXTE HISTORIQUE -->
+      <div class="card" style="border-left:4px solid var(--orange)">
+        <div class="card-title" style="color:var(--orange)">🌍 L'époque — contexte historique &amp; culturel</div>
+        <div style="font-size:.73rem;color:#888;margin-bottom:6px;">Que se passait-il dans le monde quand ce livre a été écrit ? (politique, guerres, société, culture…)</div>
+        <textarea id="livre-contexte" class="field" rows="5"
+          placeholder="Ex. : L'Angleterre victorienne (1837-1901) est une époque de révolution industrielle, d'expansion coloniale et de grandes inégalités sociales. Les villes s'industrialisent rapidement mais les ouvriers vivent dans des conditions difficiles…"
+          oninput="saveLivreContexte()"></textarea>
+      </div>
+
+      <!-- ZONE 2 : L'AUTEUR AU MOMENT DE L'ÉCRITURE -->
+      <div class="card" style="border-left:4px solid var(--violet)">
+        <div class="card-title" style="color:var(--violet)">✍️ L'auteur·e au moment de l'écriture</div>
+        <div style="font-size:.73rem;color:#888;margin-bottom:6px;">Quel âge avait-il/elle ? Sa vie à cette époque (santé, famille, argent, rencontres importantes…)</div>
+        <textarea id="livre-auteur-vie" class="field" rows="5"
+          placeholder="Ex. : À l'époque où il écrit ce livre, l'auteur a 38 ans. Il vient de traverser une période difficile… Il est marié, père de famille… Sa situation financière est…"
+          oninput="saveLivreContexte()"></textarea>
+      </div>
+
+      <!-- ZONE 3 : PLACE DANS L'ŒUVRE -->
+      <div class="card" style="border-left:4px solid var(--vert)">
+        <div class="card-title" style="color:var(--vert)">📖 Place dans la trajectoire de l'auteur·e</div>
+        <div style="font-size:.73rem;color:#888;margin-bottom:6px;">Est-ce son premier livre ? Une œuvre majeure ? Une rupture dans son style ? Ce que ce livre représente dans sa carrière.</div>
+        <textarea id="livre-trajectoire" class="field" rows="4"
+          placeholder="Ex. : Ce roman est l'œuvre la plus célèbre de l'auteur. Écrit après… il marque un tournant dans son écriture car… Avant ce livre, il/elle avait publié… Après, il/elle écrira…"
+          oninput="saveLivreContexte()"></textarea>
       </div>
 
       <div class="export-card">
@@ -629,6 +659,13 @@ const LIVRES_DEMO = [
     annee: 'Années 1940',
     dateCreation: '10/01/2026',
     tsCreation: 1736467200000,
+
+    contexte: "Le Petit Prince est publié en 1943, en pleine Seconde Guerre mondiale. Saint-Exupéry l'écrit en exil à New York, loin de la France occupée par l'Allemagne nazie. En Europe, des millions de personnes souffrent, fuient ou meurent. C'est dans ce contexte de destruction et de violence que l'auteur écrit un conte sur ce qui compte vraiment dans la vie : l'amitié, l'amour, la beauté des choses simples.\n\nCulturellement, 1943 est une période de doute profond sur les valeurs humaines. La montée du fascisme et de la barbarie pousse de nombreux intellectuels à se demander ce que l'humanité a perdu. Saint-Exupéry répond à sa façon : en défendant l'enfance, l'imagination et la tendresse contre l'utilitarisme des adultes.",
+
+    auteurVie: "Antoine de Saint-Exupéry naît en 1900 à Lyon dans une famille de la petite noblesse. Quand il écrit Le Petit Prince en 1942-1943, il a 42 ans. Sa vie est alors pleine de tensions et de douleurs.\n\nAviateur passionné depuis toujours, il a vécu de nombreux accidents d'avion, dont un dans le désert libyen en 1935 — expérience qui inspire directement le décor du livre. Sa santé est fragile : ses blessures l'ont usé physiquement.\n\nSur le plan personnel, son mariage avec Consuelo Suncín est tumultueux, fait de séparations et de réconciliations. La Rose du Petit Prince est largement inspirée de Consuelo : belle, capricieuse, aimée malgré tout. À New York en exil, Saint-Exupéry se sent inutile, éloigné de la France en guerre, déprimé. Il écrit ce livre comme un cadeau et un testament spirituel. Il mourra en mission en 1944, disparu en mer Méditerranée, à 44 ans.",
+
+    trajectoire: "Le Petit Prince est à la fois l'œuvre la plus personnelle et la plus célèbre de Saint-Exupéry. Ce n'est pas son premier livre — il avait déjà publié Courrier Sud (1929), Vol de Nuit (1931, Prix Femina), Terre des Hommes (1939, Grand Prix du roman de l'Académie française) — mais c'est le seul qui s'adresse directement aux enfants, tout en parlant aux adultes.\n\nDans sa trajectoire, ce livre marque une rupture : Saint-Exupéry abandonne temporairement le récit réaliste d'aviation pour le conte philosophique et symbolique. C'est aussi son œuvre testamentaire — il la publie quelques mois avant sa mort. Aujourd'hui, Le Petit Prince est le livre français le plus traduit au monde (plus de 300 langues) et l'un des plus vendus de l'histoire de la littérature.",
+
     personnages: [
       { id:'ent_pp_01', nom:'Le Petit Prince', couleur:'#2E5FA3',
         notes:"Personnage principal. Petit garçon venu de l'astéroïde B-612. Curieux, sensible, il pose des questions très profondes. Il aime sa rose malgré ses caprices. Il apprend la valeur de l'amitié avec le renard." },
@@ -641,15 +678,30 @@ const LIVRES_DEMO = [
       { id:'ent_pp_05', nom:'Le Serpent', couleur:'#6A1B9A',
         notes:"Mystérieux serpent rencontré à l'arrivée sur Terre. Il parle par énigmes. C'est lui qui permettra au Petit Prince de rentrer chez lui à la fin." }
     ],
+    matrice: {
+      'ent_pp_01__ent_pp_02': 'Ami(e)',
+      'ent_pp_02__ent_pp_01': 'Ami(e)',
+      'ent_pp_01__ent_pp_03': 'Amoureux/se',
+      'ent_pp_03__ent_pp_01': 'Protégé(e)',
+      'ent_pp_01__ent_pp_04': 'Élève',
+      'ent_pp_04__ent_pp_01': 'Mentor',
+      'ent_pp_01__ent_pp_05': 'Allié(e)',
+      'ent_pp_02__ent_pp_03': '—',
+      'ent_pp_02__ent_pp_04': '—',
+      'ent_pp_02__ent_pp_05': '—',
+      'ent_pp_03__ent_pp_04': '—',
+      'ent_pp_03__ent_pp_05': '—',
+      'ent_pp_04__ent_pp_05': '—'
+    },
     lieux: [
       { id:'ent_pp_l1', nom:'L\'astéroïde B-612', couleur:'#2E5FA3',
-        notes:"Minuscule planète du Petit Prince. Si petite qu'on peut voir le coucher de soleil plusieurs fois par jour. Il y a trois volcans et une rose unique." },
+        notes:"Minuscule planète du Petit Prince. Si petite qu'on peut voir le coucher de soleil plusieurs fois par jour. Il y a trois volcans et une rose unique. Espace symbolique : c'est le monde de l'enfance, de la simplicité et de l'amour." },
       { id:'ent_pp_l2', nom:'Le désert du Sahara', couleur:'#2E7D32',
-        notes:"Lieu sur Terre où l'aviateur tombe en panne. C'est là qu'il rencontre le Petit Prince. Le désert représente la solitude mais aussi la beauté des choses essentielles." },
+        notes:"Lieu sur Terre où l'aviateur tombe en panne. C'est là qu'il rencontre le Petit Prince. Le désert représente la solitude mais aussi la beauté des choses essentielles. Espace ouvert, infini, hostile mais magnifique." },
       { id:'ent_pp_l3', nom:'Les autres planètes', couleur:'#E65100',
-        notes:"Le Petit Prince visite 6 planètes avant la Terre : le roi, le vaniteux, le buveur, le businessman, l'allumeur de réverbères, le géographe. Chaque planète représente un défaut des adultes." }
+        notes:"Le Petit Prince visite 6 planètes avant la Terre : le roi, le vaniteux, le buveur, le businessman, l'allumeur de réverbères, le géographe. Chaque planète représente un défaut des adultes. Espaces fermés = prisonniers de leur obsession." }
     ],
-    temps: "L'histoire se passe dans les années 1940. La narration commence par le souvenir d'enfance de l'aviateur, puis sa panne dans le Sahara. Le Petit Prince lui raconte ses voyages. L'histoire dure 8 jours dans le désert. La fin est mystérieuse : le Petit Prince disparaît avec le serpent pour rentrer chez lui.",
+    temps: "L'histoire se passe dans les années 1940. La narration commence par le souvenir d'enfance de l'aviateur, puis sa panne dans le Sahara.\n\nORDRE : La structure est en flash-back — l'aviateur raconte depuis le présent une aventure passée. Le Petit Prince lui-même raconte ses voyages à rebours.\n\nDURÉE : L'histoire dans le désert dure 8 jours. Certains moments sont très dilatés (la conversation avec le renard, très longue et importante) ; d'autres sont résumés en quelques mots (les 6 planètes visitées).\n\nFRÉQUENCE : Le coucher de soleil sur l'astéroïde B-612 est raconté de manière itérative : « un jour il vit 43 couchers de soleil ».",
     mots: "── Mot inconnu ──\nApprivoiser : créer des liens, rendre quelqu'un familier.\n\n── Mot inconnu ──\nBaobab : très grand arbre d'Afrique. Dangereux sur la planète du Petit Prince car ses racines peuvent tout envahir.\n\n« On ne voit bien qu'avec le cœur. L'essentiel est invisible pour les yeux. »\n(Le Renard, chapitre 21)\n\n« C'est le temps que tu as perdu pour ta rose qui fait ta rose si importante. »\n(Le Renard, chapitre 21)",
     redacType: 'recit',
     redac: {
@@ -667,6 +719,17 @@ const LIVRES_DEMO = [
       arg2: "Ensuite, Saint-Exupéry critique les adultes qui passent leur vie à des choses sans importance. En effet, le Petit Prince visite six planètes où les adultes sont ridicules : le roi qui veut commander sans sujet, le vaniteux qui veut être admiré, le businessman qui compte des étoiles qu'il croit posséder. Ces personnages montrent que les adultes ont oublié ce qui compte vraiment.",
       arg3: "De plus, la rose du Petit Prince nous enseigne que la valeur des choses vient du temps qu'on leur consacre. Ainsi, quand le Renard lui dit que sa rose est unique parce qu'il a perdu du temps pour elle, on comprend que ce sont nos liens et nos efforts qui donnent de la valeur aux êtres que l'on aime.",
       conclu: "Pour conclure, Le Petit Prince nous rappelle que l'essentiel est invisible pour les yeux : l'amitié, l'amour et la simplicité comptent plus que la richesse ou le pouvoir. Ce livre, écrit pour les enfants mais aussi pour les adultes, nous invite à garder notre regard d'enfant afin de voir ce qui compte vraiment dans la vie."
+    },
+    schemaType: 'moderne',
+    narration: {
+      nar_m1: "L'aviateur est tombé en panne dans le désert du Sahara. Il est seul, loin de tout secours, et doit réparer son moteur. Le Petit Prince, lui, vit seul sur son astéroïde B-612 avec sa rose capricieuse et ses trois volcans.",
+      nar_m2: "Au lever du jour, une petite voix réveille l'aviateur : un étrange petit garçon lui demande de dessiner un mouton. Cette rencontre improbable au milieu du désert va tout changer.",
+      nar_m3: "Le Petit Prince raconte ses voyages : les six planètes absurdes peuplées d'adultes ridicules, sa rencontre avec le serpent, son arrivée sur Terre. L'aviateur découvre peu à peu qui est ce mystérieux enfant. Le renard révèle le secret de l'amitié : apprivoiser.",
+      nar_m4: "Le Petit Prince décide de rentrer chez lui pour retrouver sa rose. Mais rentrer signifie mourir sur Terre — le serpent doit le mordre. L'aviateur essaie de le retenir, mais comprend qu'il ne peut pas s'y opposer.",
+      nar_m5: "La nuit, loin de l'aviateur, le Petit Prince se laisse mordre par le serpent et s'effondre doucement dans le sable.",
+      nar_m6: "L'aviateur réussit à réparer son avion et peut repartir. Mais le corps du Petit Prince a disparu — il est retourné sur sa planète, parmi les étoiles.",
+      nar_m7: "L'aviateur quitte le désert. Le conflit central — peut-on sauver ce que l'on aime ? — reste ouvert : il ne sait pas si le Petit Prince est vivant sur B-612.",
+      nar_m8: "L'aviateur ne regarde plus les étoiles de la même façon. L'une d'elles renferme peut-être le rire du Petit Prince. La perte et l'amour transforment le monde ordinaire."
     }
   },
   {
@@ -678,6 +741,13 @@ const LIVRES_DEMO = [
     annee: 'Vers 1840, Missouri, États-Unis',
     dateCreation: '25/02/2026',
     tsCreation: 1740441600000,
+
+    contexte: "Le livre est publié en 1876, mais l'histoire se passe vers 1840 dans le Missouri, au bord du Mississippi. C'est l'Amérique d'avant la guerre de Sécession (1861-1865) — une société encore rurale, fondée sur l'esclavage dans le Sud, traversée par des tensions sociales profondes.\n\nMark Twain écrit en 1876, quelques années après la guerre civile et l'abolition de l'esclavage. Les États-Unis sont en pleine reconstruction (Reconstruction Era). C'est aussi l'époque de la conquête de l'Ouest, du chemin de fer, de l'industrialisation rapide. En plongeant dans son enfance au bord du Mississippi, Twain célèbre et critique à la fois l'Amérique de sa jeunesse : sa liberté, mais aussi ses hypocrisies (religion, respectabilité, justice expéditive).\n\nCulturellement, 1876 est l'année du centenaire américain. Le pays cherche ses mythes fondateurs — Tom Sawyer en devient l'un d'eux : l'enfant libre et malin, héros typiquement américain.",
+
+    auteurVie: "Samuel Langhorne Clemens, dit Mark Twain, naît en 1835 dans le Missouri. Quand il écrit Les Aventures de Tom Sawyer (1874-1876), il a environ 40 ans. Sa vie est alors à un tournant heureux.\n\nFinancièrement, il est à l'aise : son précédent livre, Les Innocents à l'étranger (1869), est un énorme succès. Il vit dans une belle maison à Hartford, Connecticut, avec sa femme Olivia Langdon (épousée en 1870) et leurs enfants. Cette sécurité familiale lui permet de se replonger avec nostalgie dans l'enfance au bord du Mississippi.\n\nTom Sawyer est largement autobiographique : le personnage est inspiré de Twain lui-même enfant, Becky Thatcher de sa première fiancée, et la ville de Saint Petersburg de Hannibal, Missouri, où il a grandi. Cette période est l'une des plus créatives de sa vie — il écrira ensuite Huckleberry Finn (1884), son chef-d'œuvre.",
+
+    trajectoire: "Tom Sawyer est le quatrième livre de Mark Twain, mais le premier grand roman américain pour la jeunesse. C'est une rupture dans sa carrière : il abandonne le récit de voyage satirique (Les Innocents à l'étranger, Voyages en Europe) pour la fiction romanesque ancrée dans son enfance.\n\nCe livre est le premier d'une série : Huckleberry Finn (1884) en est la suite directe, considérée comme le chef-d'œuvre de Twain et l'un des plus grands romans américains. Tom Sawyer permet à Twain d'inventer son univers fictif du Mississippi, qu'il explorera toute sa vie. Twain lui-même disait que Tom Sawyer était « surtout un livre pour les enfants » mais Huckleberry Finn « pour les adultes ».",
+
     personnages: [
       { id:'ent_ts_01', nom:'Tom Sawyer', couleur:'#2E5FA3',
         notes:"Personnage principal. Garçon espiègle et imaginatif d'environ 12 ans. Vit chez sa tante Polly. Souvent en retenue mais très courageux quand c'est nécessaire. Amoureux de Becky Thatcher." },
@@ -690,15 +760,31 @@ const LIVRES_DEMO = [
       { id:'ent_ts_05', nom:'Joe l\'Indien', couleur:'#6A1B9A',
         notes:"Grand méchant du roman. Meurtrier cruel et vengeur. Tom l'a vu commettre un crime dans le cimetière. Il représente le danger tout au long du roman." }
     ],
+    matrice: {
+      'ent_ts_01__ent_ts_02': 'Meilleur(e) ami(e)',
+      'ent_ts_02__ent_ts_01': 'Meilleur(e) ami(e)',
+      'ent_ts_01__ent_ts_03': 'Enfant',
+      'ent_ts_03__ent_ts_01': 'Protecteur/trice',
+      'ent_ts_01__ent_ts_04': 'Amoureux/se',
+      'ent_ts_04__ent_ts_01': 'Ami(e)',
+      'ent_ts_01__ent_ts_05': 'Victime',
+      'ent_ts_05__ent_ts_01': 'Antagoniste',
+      'ent_ts_02__ent_ts_03': '—',
+      'ent_ts_02__ent_ts_04': '—',
+      'ent_ts_02__ent_ts_05': 'Victime',
+      'ent_ts_03__ent_ts_04': '—',
+      'ent_ts_03__ent_ts_05': '—',
+      'ent_ts_04__ent_ts_05': '—'
+    },
     lieux: [
       { id:'ent_ts_l1', nom:'Saint Petersburg', couleur:'#2E5FA3',
-        notes:"Village fictif au bord du Mississippi où se déroule l'essentiel de l'histoire. Inspiré de Hannibal, la ville natale de Mark Twain." },
+        notes:"Village fictif au bord du Mississippi où se déroule l'essentiel de l'histoire. Inspiré de Hannibal, la ville natale de Mark Twain. Espace social : représente la société américaine avec ses règles et hypocrisies." },
       { id:'ent_ts_l2', nom:"L'île de Jackson", couleur:'#2E7D32',
-        notes:"Île sur le Mississippi où Tom, Huck et Joe Harper s'enfuient pour jouer aux pirates. Tout le village les croit noyés." },
+        notes:"Île sur le Mississippi où Tom, Huck et Joe Harper s'enfuient pour jouer aux pirates. Tout le village les croit noyés. Espace ouvert, symbole de liberté absolue hors des règles des adultes." },
       { id:'ent_ts_l3', nom:'La grotte de McDougal', couleur:'#c0392b',
-        notes:"Grotte immense et labyrinthique près du village. Tom et Becky s'y perdent pendant plusieurs jours. Joe l'Indien y est caché. Moment le plus angoissant du roman." }
+        notes:"Grotte immense et labyrinthique près du village. Tom et Becky s'y perdent pendant plusieurs jours. Joe l'Indien y est caché. Espace fermé, oppressant, dangereux. Le moment le plus angoissant du roman." }
     ],
-    temps: "L'histoire se passe vers 1840 dans le Missouri, au bord du Mississippi. Narration chronologique. Événements principaux : la clôture blanchie, la nuit au cimetière où Tom voit le meurtre, la fugue sur l'île des pirates, le procès du docteur Robinson, la disparition dans la grotte et la découverte du trésor de Joe l'Indien.",
+    temps: "L'histoire se passe vers 1840 dans le Missouri, au bord du Mississippi.\n\nORDRE : Narration chronologique, sans flash-back. Les événements s'enchaînent dans l'ordre : la clôture, le cimetière, l'île des pirates, le procès, la grotte, le trésor.\n\nDURÉE : Plusieurs semaines, peut-être quelques mois. La scène dans la grotte est la plus dilatée (plusieurs jours racontés heure par heure). La fugue sur l'île dure environ une semaine. La découverte du trésor à la fin est racontée rapidement.\n\nFRÉQUENCE : Les bêtises de Tom sont racontées de façon itérative au début (« il faisait souvent… »). Les moments dramatiques (le meurtre au cimetière, la grotte) sont des scènes uniques racontées au présent.",
     mots: "── Mot inconnu ──\nEspiègle : qui aime faire des farces, malicieux mais sans méchanceté.\n\n── Mot inconnu ──\nLabyrinthique : comme un labyrinthe, avec des couloirs dans tous les sens où on se perd facilement.\n\n« Tom dit à lui-même que la vie n'était décidément pas si mauvaise. »\n(après avoir convaincu ses amis de badigeonner la clôture à sa place)",
     redacType: 'argument',
     redac: {
@@ -715,6 +801,14 @@ const LIVRES_DEMO = [
       arg2: "Ensuite, Tom fait preuve d'un vrai courage quand les situations deviennent sérieuses. En effet, lorsqu'il est perdu avec Becky dans la grotte de McDougal, pendant plusieurs jours dans le noir, il garde son calme et explore les couloirs pour trouver une sortie. Il protège Becky et finit par sauver leur vie.",
       arg3: "De plus, Tom n'hésite pas à dire la vérité quand c'est nécessaire, même si c'est difficile. Par exemple, lors du procès du docteur Robinson, Tom témoigne contre Joe l'Indien pour sauver un innocent accusé à tort, malgré la peur que lui inspire ce meurtrier dangereux.",
       conclu: "Pour conclure, Tom Sawyer est un héros de l'enfance parce qu'il allie l'imagination, la liberté et le courage. Mark Twain nous montre que l'enfance est une période précieuse où tout est possible, et que même un petit garçon turbulent peut devenir un véritable héros lorsque les circonstances l'exigent."
+    },
+    schemaType: 'freytag',
+    narration: {
+      nar_f1: "Tom Sawyer vit à Saint Petersburg avec sa tante Polly. C'est un garçon espiègle qui cherche à échapper aux corvées et à l'école. Il est amoureux de Becky Thatcher, la fille du juge. Son meilleur ami est Huckleberry Finn, l'enfant libre du village.",
+      nar_f2: "Une nuit, Tom et Huck vont au cimetière et assistent sans le vouloir au meurtre du docteur Robinson par Joe l'Indien. Ils jurent de se taire par peur. La tension monte : un innocent (Muff Potter) est accusé. Tom et Huck fuient sur l'île de Jackson, crus morts par le village. Tout le monde les pleure.",
+      nar_f3: "Lors du procès de Muff Potter, Tom prend la parole et témoigne contre Joe l'Indien. Joe s'enfuit par la fenêtre. Tom a sauvé un innocent mais se sait désormais en danger. Plus tard, perdu dans la grotte avec Becky pendant des jours, il aperçoit Joe l'Indien dans les profondeurs.",
+      nar_f4: "Tom trouve une sortie de la grotte et sauve Becky. Le village les accueille en héros. Joe l'Indien, lui, est retrouvé mort dans la grotte, murée par les habitants. Le danger est écarté.",
+      nar_f5: "Tom et Huck retournent dans la grotte et découvrent le trésor caché de Joe l'Indien — une fortune en pièces d'or. Les deux garçons deviennent riches. Huck est adopté par la veuve Douglas. Tom est le héros du village."
     }
   },
   {
@@ -726,28 +820,52 @@ const LIVRES_DEMO = [
     annee: 'Angleterre victorienne, 1865',
     dateCreation: '15/03/2026',
     tsCreation: 1742000000000,
+
+    contexte: "Alice au Pays des Merveilles est publié en 1865, en pleine époque victorienne (règne de la reine Victoria, 1837-1901). L'Angleterre est alors la première puissance mondiale : son empire colonial couvre un quart de la planète, sa révolution industrielle transforme la société, et Londres est la ville la plus riche et la plus peuplée du monde.\n\nMais cette société victorienne est aussi très rigide : codes stricts de bienséance, hiérarchies sociales inflexibles, éducation très sévère pour les enfants — surtout les filles, qui doivent être dociles et silencieuses. Alice est précisément une réponse à ces codes : une petite fille qui pose des questions, qui conteste l'autorité absurde, qui ose dire que la Reine se trompe.\n\nCulturellement, 1865 voit aussi la fin de la guerre civile américaine. En Grande-Bretagne, c'est l'âge d'or de la littérature pour enfants. Carroll invente un nouveau genre : le nonsense, la littérature de l'absurde volontaire, où la logique habituelle est renversée pour mieux la questionner.",
+
+    auteurVie: "Lewis Carroll est le pseudonyme de Charles Lutwidge Dodgson, né en 1832. Quand il publie Alice en 1865, il a 33 ans. C'est un mathématicien et logicien reconnu à l'Université d'Oxford, où il enseigne depuis 1855. Il est également diacre de l'Église anglicane.\n\nSur le plan personnel, Carroll est un homme timide et solitaire, qui bégaie en présence des adultes mais se sent parfaitement à l'aise avec les enfants. Il est très ami avec la famille Liddell — le doyen de son collège — et surtout avec leurs trois filles. Alice Liddell, 10 ans, est son amie et son inspiration directe pour le personnage.\n\nLe livre naît d'une histoire racontée lors d'une promenade en barque le 4 juillet 1862. Alice Liddell lui demande de l'écrire. Carroll met trois ans à le rédiger et illustrer. Sa santé est bonne à cette période ; c'est une époque créative et heureuse de sa vie.",
+
+    trajectoire: "Alice au Pays des Merveilles est le premier roman de Lewis Carroll — avant lui, il n'avait publié que des articles mathématiques et quelques poèmes comiques. Ce livre le transforme immédiatement en célébrité.\n\nLa suite, De l'autre côté du miroir (1871), est son second grand roman avec Alice et est considérée par certains comme encore plus accomplie. Carroll écrira d'autres œuvres (La Chasse au Snark, Sylvie et Bruno) mais aucune n'atteindra la renommée d'Alice.\n\nAujourd'hui, Alice au Pays des Merveilles est l'un des textes les plus cités, adaptés et analysés de la littérature mondiale. Il a influencé le surréalisme, la psychanalyse, l'informatique (l'univers de Lewis Carroll a inspiré des logiciens comme Alan Turing) et la culture populaire du XXe siècle.",
+
     personnages: [
       { id:'ent_al_01', nom:'Alice', couleur:'#2E5FA3',
         notes:"Personnage principal. Petite fille curieuse et courageuse d'environ 7 ans. Elle tombe dans un terrier de lapin et découvre un monde impossible. Elle garde son bon sens face à l'absurdité du Pays des Merveilles." },
       { id:'ent_al_02', nom:'Le Lapin Blanc', couleur:'#2E7D32',
-        notes:"Lapin en habit qui regarde sa montre en criant Je suis en retard ! C'est lui qu'Alice suit. Il représente le temps qui passe et l'urgence." },
+        notes:"Lapin en habit qui regarde sa montre en criant Je suis en retard ! C'est lui qu'Alice suit. Il représente le temps qui passe et l'urgence. Il ouvre la porte sur le monde de l'absurde." },
       { id:'ent_al_03', nom:'La Reine de Coeur', couleur:'#c0392b',
-        notes:"Reine tyrannique qui crie Qu'on lui coupe la tête ! Elle représente le pouvoir absurde et injuste. Alice finit par ne plus en avoir peur." },
+        notes:"Reine tyrannique qui crie Qu'on lui coupe la tête ! Elle représente le pouvoir absurde et injuste. Alice finit par ne plus en avoir peur et lui tient tête." },
       { id:'ent_al_04', nom:'Le Chapelier Fou', couleur:'#E65100',
         notes:"Personnage excentrique bloqué dans une fête du thé interminable. Dit des choses sans sens qui cachent parfois une vérité. Un des personnages les plus célèbres." },
       { id:'ent_al_05', nom:'Le Chat du Cheshire', couleur:'#6A1B9A',
-        notes:"Chat qui peut disparaître en ne laissant que son sourire. Donne des conseils énigmatiques. Sa phrase : Nous sommes tous fous ici." }
+        notes:"Chat qui peut disparaître en ne laissant que son sourire. Donne des conseils énigmatiques. Sa phrase : Nous sommes tous fous ici. Guide ambigu entre sagesse et folie." }
     ],
+    matrice: {
+      'ent_al_01__ent_al_02': 'Allié(e)',
+      'ent_al_02__ent_al_01': 'Indifférent',
+      'ent_al_01__ent_al_03': 'Victime',
+      'ent_al_03__ent_al_01': 'Antagoniste',
+      'ent_al_01__ent_al_04': 'Témoin',
+      'ent_al_04__ent_al_01': 'Repoussoir',
+      'ent_al_01__ent_al_05': 'Élève',
+      'ent_al_05__ent_al_01': 'Mentor',
+      'ent_al_02__ent_al_03': 'Protégé(e)',
+      'ent_al_03__ent_al_02': 'Protecteur/trice',
+      'ent_al_02__ent_al_04': '—',
+      'ent_al_02__ent_al_05': '—',
+      'ent_al_03__ent_al_04': '—',
+      'ent_al_03__ent_al_05': '—',
+      'ent_al_04__ent_al_05': '—'
+    },
     lieux: [
       { id:'ent_al_l1', nom:'Le terrier du lapin', couleur:'#2E5FA3',
-        notes:"Entrée dans le Pays des Merveilles. Alice tombe très longtemps avant d'arriver dans un couloir avec des portes. Elle doit rapetisser ou grandir pour passer les portes." },
+        notes:"Entrée dans le Pays des Merveilles. Alice tombe très longtemps avant d'arriver dans un couloir avec des portes. Elle doit rapetisser ou grandir pour passer. Espace symbolique : le passage de l'enfance consciente vers l'inconscient, le rêve. Espace fermé, oppressant." },
       { id:'ent_al_l2', nom:"La maison du Chapelier", couleur:'#2E7D32',
-        notes:"Lieu de la fête du thé interminable. Le Chapelier, le Lièvre de Mars et le Loir sont bloqués là pour toujours à cause d'une dispute avec le Temps." },
+        notes:"Lieu de la fête du thé interminable. Le Chapelier, le Lièvre de Mars et le Loir sont bloqués là pour toujours à cause d'une dispute avec le Temps. Espace fermé, répétitif, symbole d'une vie sans progrès ni sens." },
       { id:'ent_al_l3', nom:'Le palais de la Reine', couleur:'#c0392b',
-        notes:"Château où la Reine joue au croquet avec des flamants roses comme maillets et des hérissons comme boules. Tout est absurde. C'est là que se passe le procès final." }
+        notes:"Château où la Reine joue au croquet avec des flamants roses comme maillets et des hérissons comme boules. Tout est absurde. C'est là que se passe le procès final. Espace du pouvoir injuste et ridicule." }
     ],
-    temps: "L'histoire se passe en Angleterre victorienne vers 1865. La structure est celle d'un rêve : Alice s'endort puis tout enchaîne de manière illogique. Elle grandit, rapetisse, change sans arrêt. Il n'y a pas d'ordre logique dans les aventures, c'est voulu. Le livre se termine quand Alice se réveille.",
-    mots: "── Mot inconnu ──\nAbsurde : qui n'a aucun sens logique, complètement illogique.\n\n── Mot inconnu ──\nExcentrique : quelqu'un qui se comporte de façon bizarre et originale.\n\n« Nous sommes tous fous ici. Je suis fou. Tu es folle. »\n(Le Chat du Cheshire)\n\n« Il est impossible de croire à des choses impossibles. »\n(La Reine de Coeur)",
+    temps: "L'histoire se passe en Angleterre victorienne vers 1865. La structure temporelle est celle d'un rêve.\n\nORDRE : La structure est délibérément non-chronologique et illogique — comme un rêve. Les aventures s'enchaînent sans cause logique. Carroll subvertit volontairement l'ordre narratif pour montrer l'absurdité du monde.\n\nDURÉE : On ne sait pas combien de temps dure le rêve d'Alice. Certaines scènes semblent très longues (la fête du thé, le procès) tandis que d'autres passent en un instant (les transformations de taille). C'est l'effet du rêve : le temps y est élastique.\n\nFRÉQUENCE : Plusieurs événements sont répétitifs — Alice grandit et rapetisse à plusieurs reprises (effet itératif symbolisant son incapacité à s'adapter). La Reine crie «Qu'on lui coupe la tête !» de manière répétitive (obsession, absurdité du pouvoir).",
+    mots: "── Mot inconnu ──\nAbsurde : qui n'a aucun sens logique, complètement illogique.\n\n── Mot inconnu ──\nExcentrique : quelqu'un qui se comporte de façon bizarre et originale.\n\n── Mot inconnu ──\nNonsense : genre littéraire anglais — texte volontairement illogique pour faire rire et réfléchir.\n\n« Nous sommes tous fous ici. Je suis fou. Tu es folle. »\n(Le Chat du Cheshire)\n\n« Il est impossible de croire à des choses impossibles. »\n(La Reine de Coeur)",
     redacType: 'recit',
     redac: {
       redac_r1: "Par un après-midi d'été en Angleterre, Alice est assise sur la berge avec sa soeur qui lit un livre sans images. Alice s'ennuie et commence à somnoler quand elle aperçoit quelque chose d'extraordinaire : un lapin blanc en habit qui court en regardant sa montre et en criant qu'il est en retard.",
@@ -764,9 +882,16 @@ const LIVRES_DEMO = [
       arg2: "Ensuite, Alice n'abandonne pas malgré les situations impossibles qu'elle rencontre. En effet, quand elle rapetisse ou grandit sans le vouloir, quand les portes sont trop petites ou trop grandes, elle cherche toujours une solution. Cette persévérance montre qu'elle est déterminée à rentrer chez elle quoi qu'il arrive.",
       arg3: "",
       conclu: "Pour conclure, Alice est un personnage courageux parce qu'elle garde sa raison et sa volonté dans un monde qui n'a aucun sens. Lewis Carroll nous montre qu'un enfant peut faire face à l'inconnu et à l'absurde en restant lui-même. Ce livre nous rappelle que le courage, ce n'est pas l'absence de peur, mais la capacité à continuer malgré elle."
+    },
+    schemaType: 'aristote',
+    narration: {
+      nar_a1: "Alice s'ennuie sur la berge avec sa sœur qui lit. Elle est en Angleterre, par un après-midi d'été calme. Tout est ordinaire — jusqu'à ce qu'elle aperçoive un lapin blanc en habit qui court en regardant sa montre.",
+      nar_a2: "Alice suit le lapin dans son terrier et tombe dans un monde impossible. Elle ne comprend pas les règles, grandit et rapetisse, rencontre des personnages absurdes. Elle cherche à rentrer chez elle mais chaque aventure l'en éloigne. La Reine de Coeur la menace. Le monde entier semble vouloir l'intimider.",
+      nar_a3: "Au procès final, Alice prend conscience qu'elle n'a plus peur et que les habitants du Pays des Merveilles ne sont que des cartes à jouer. Elle se réveille sur la berge — c'était un rêve. Mais Alice a changé : elle sait maintenant qu'on peut résister à l'absurdité et à l'autorité injuste."
     }
   }
 ];
+
 function chargerBiblio() {
   try {
     const raw = localStorage.getItem('axel_biblio');
@@ -866,6 +991,9 @@ function creerNouveauLivreObj(titre, auteur, genre) {
     temps:         '',
     mots:          '',
     comprehension: '',
+    contexte:      '',
+    auteurVie:     '',
+    trajectoire:   '',
     matrice:       {},
     narration:     {},
     schemaType:    'aristote'
@@ -915,6 +1043,9 @@ function ouvrirLivre(id) {
   document.getElementById('temps-text').value   = livre.temps  || '';
   document.getElementById('mots-zone').value    = livre.mots   || '';
   document.getElementById('compre-text').value  = livre.comprehension || '';
+  document.getElementById('livre-contexte').value    = livre.contexte    || '';
+  document.getElementById('livre-auteur-vie').value  = livre.auteurVie   || '';
+  document.getElementById('livre-trajectoire').value = livre.trajectoire || '';
   const diss = livre.dissertation || {};
   document.getElementById('diss-sujet').value = diss.sujet  || '';
   document.getElementById('diss-intro').value  = diss.intro  || '';
@@ -970,6 +1101,13 @@ function saveLivre() {
   // Mettre à jour le header
   document.getElementById('header-titre').textContent =
     LIVRE_ACTIF.titre || 'Sans titre';
+  sauvegarderBiblio();
+}
+function saveLivreContexte() {
+  if (!LIVRE_ACTIF) return;
+  LIVRE_ACTIF.contexte    = document.getElementById('livre-contexte').value;
+  LIVRE_ACTIF.auteurVie   = document.getElementById('livre-auteur-vie').value;
+  LIVRE_ACTIF.trajectoire = document.getElementById('livre-trajectoire').value;
   sauvegarderBiblio();
 }
 function saveTexte(champ) {
