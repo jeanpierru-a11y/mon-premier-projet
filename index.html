@@ -1180,6 +1180,8 @@ function ouvrirLivre(id) {
   setTimeout(loadRedac, 50);
   // Charger le schéma narratif
   setTimeout(loadIntrigue, 50);
+  // Redessiner le graphe une fois le DOM visible (clientWidth correct)
+  setTimeout(renderGraphe, 100);
 }
 
 function retourBiblio() {
