@@ -1184,13 +1184,8 @@ function ouvrirLivre(id) {
   // (clientWidth est 0 tant que le conteneur est caché)
   _grapheH = null; // forcer recalcul hauteur
   loadD3(() => {
-    // 1) Afficher le graphe (équivalent "Mettre à jour le graphe")
     setTimeout(() => renderGraphe(), 120);
-    // 2-5) Appuyer 4 fois sur "+" avec un délai entre chaque
-    setTimeout(() => ajusterGraphe(+50), 220);
-    setTimeout(() => ajusterGraphe(+50), 320);
-    setTimeout(() => ajusterGraphe(+50), 420);
-    setTimeout(() => ajusterGraphe(+50), 520);
+    setTimeout(() => renderGraphe(), 300);
   });
 }
 
