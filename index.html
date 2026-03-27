@@ -181,6 +181,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:va
 .phase-ta:focus{border-color:var(--bleu);}
 .phase-hint{font-size:.7rem;color:#999;font-style:italic;margin-bottom:6px;line-height:1.4;}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
 <body>
 
@@ -1183,9 +1184,12 @@ function ouvrirLivre(id) {
   // Redessiner le graphe une fois le DOM visible ET D3 chargé
   // (clientWidth est 0 tant que le conteneur est caché)
   _grapheH = null; // forcer recalcul hauteur
+  // Dessiner le graphe quand D3 est chargé ET le DOM visible
+  // requestAnimationFrame garantit que le navigateur a rendu le layout
   loadD3(() => {
-    setTimeout(() => renderGraphe(), 120);
-    setTimeout(() => renderGraphe(), 300);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => renderGraphe());
+    });
   });
 }
 
@@ -1943,15 +1947,9 @@ function saveMatriceCell(sel) {
 // ════════════════════════════════════════════════════════
 // GRAPHE D3 — statique, drag individuel, labels vers l'extérieur
 // ════════════════════════════════════════════════════════
-let d3Loaded = false;
+let d3Loaded = true; // D3 chargé dans le head
 
-function loadD3(cb) {
-  if (d3Loaded) { cb(); return; }
-  const s = document.createElement('script');
-  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js';
-  s.onload = () => { d3Loaded = true; cb(); };
-  document.head.appendChild(s);
-}
+function loadD3(cb) { cb(); } // D3 intégré inline
 
 function renderGraphe() {
   loadD3(() => _buildGraphe());
