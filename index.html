@@ -1183,14 +1183,7 @@ function ouvrirLivre(id) {
   setTimeout(loadIntrigue, 50);
   // Redessiner le graphe une fois le DOM visible ET D3 chargé
   // (clientWidth est 0 tant que le conteneur est caché)
-  _grapheH = null; // forcer recalcul hauteur
-  // Dessiner le graphe quand D3 est chargé ET le DOM visible
-  // requestAnimationFrame garantit que le navigateur a rendu le layout
-  loadD3(() => {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => renderGraphe());
-    });
-  });
+  _grapheH = null; // forcer recalcul hauteur au prochain affichage de l'onglet Persos
 }
 
 function retourBiblio() {
@@ -1249,6 +1242,10 @@ function showTab(id, tabEl) {
   document.getElementById('sec-' + id).classList.add('active');
   if (tabEl) tabEl.classList.add('active');
   else document.querySelector('.tab')?.classList.add('active');
+  // Dessiner le graphe quand l'onglet Persos devient visible (clientWidth correct)
+  if (id === 'personnages') {
+    requestAnimationFrame(() => renderGraphe());
+  }
 }
 
 // ════════════════════════════════════════════════════════
